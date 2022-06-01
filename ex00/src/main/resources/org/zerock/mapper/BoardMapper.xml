@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="org.zerock.mapper.BoardMapper">
+  	<select id="getList" resultType="org.zerock.domain.BoardVO">
+  		SELECT * FROM tbl_board
+  	</select>
+  	
+  	<select id="getBoard" resultType="org.zerock.domain.BoardVO" parameterType="Long">
+  		SELECT * FROM tbl_board WHERE bno = #{bno}
+  	</select>
+  	
+  	<insert id="register" parameterType="org.zerock.domain.BoardVO">
+  		INSERT INTO tbl_board (
+  				bno, title, content, writer, regdate, updatedate
+  			) VALUES (
+  				(select nextval(seq))
+  				, #{title}
+  				, #{content}
+  				, #{writer}
+  				, SYSDATE()
+  				, SYSDATE()
+  			)
+  	</insert>
+  	
+  	<update id="update">
+  		UPDATE tbl_board SET 
+  			title = #{title}
+  		  , content = #{content}
+  		  , writer = #{writer}
+  		  , updatedate = SYSDATE()
+  		WHERE bno = #{bno}
+  	</update>
+  	
+  	<delete id="delete">
+  		DELETE FROM tbl_board WHERE bno = #{bno}
+  	</delete>
+  	
+  </mapper>
