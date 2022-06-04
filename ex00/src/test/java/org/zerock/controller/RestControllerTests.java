@@ -19,7 +19,7 @@ import com.google.gson.Gson;
 import lombok.extern.log4j.Log4j;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
+@WebAppConfiguration //Controller Test시 꼭 넣어주자!! 안넣어주면 Gson parsing error 나옴!!
 @ContextConfiguration({"file:src/main/webapp/WEB-INF/spring/root-context.xml"
 	//controller의 component는 servlet-context.xml에서 하므로 추가해 주어야함
    ,"file:src/main/webapp/WEB-INF/spring/appServlet/servlet-context.xml" })
