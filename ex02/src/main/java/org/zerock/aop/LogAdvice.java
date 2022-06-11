@@ -1,7 +1,10 @@
 package org.zerock.aop;
 
+import java.util.Arrays;
+import java.util.Map;
+
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -10,29 +13,28 @@ import org.springframework.stereotype.Component;
 
 import lombok.extern.log4j.Log4j;
 
-@Aspect 	/** @Description : ÇØ´ç Å¬·¡½ºÀÇ °´Ã¼°¡ Aspect¸¦ ±¸Çö ÇÑ °ÍÀÓÀ» ³ªÅ¸³»±â À§ÇÔ! */
-@Log4j  	/** @Descriptonn : ·Î±ë¿ë */
-@Component 	/** @Description : AOP¿Í °ü·ÃÀº ¾øÁö¸¸ Spring¿¡¼­ BeanÀ» ÀÎ½ÄÇÏ±â À§ÇØ¼­ »ç¿ëÇÔ! */
+/**
+ * @Description : 1) Adviceì™€ ê´€ë ¨ ì–´ë…¸í…Œì´ì…˜ë“¤ì€ ë‚´ë¶€ì ìœ¼ë¡œ Pointcutì„ ì§€ì •í•¨
+ *                   Pointcutì€ ë³„ë„ì˜ @Pointcut ìœ¼ë¡œë„ ì§€ì •ì´ ê°€ëŠ¥í•¨
+ *                </br>
+ *                </br>
+ *                2) ì•„ë˜ ë©”ì„œë“œì˜ @Berfoe ë˜ëŠ” @After ì–´ë…¸í…Œì´ì…˜ ë‚´ë¶€ì˜ execution...ë¬¸ìì—´ì€
+ *                   AspectJì˜ í¬í˜„ì‹ì´ë‹¤.  executionì˜ ê²½ìš° ì ‘ê·¼ì œí•œìì™€ íŠ¹ì • í´ë˜ìŠ¤ì˜ ë©”ì„œë“œë¥¼ ì§€ì •í•  ìˆ˜ìˆë‹¤
+ *                   - ë§¨ì•ì˜ "*"ì˜ ì˜ë¯¸ëŠ” ì ‘ê·¼ì œí•œìë¥¼ ì˜ë¯¸í•˜ê³  ë§¨ë’¤ì˜ "*"ì€ í´ë˜ìŠ¤ì˜ ì´ë¦„ê³¼ ë©”ì„œë“œì˜ ì´ë¦„ì„ ì˜ë¯¸í•œë‹¤
+ *                </br>
+ *                </br>	
+ *                3) Aspect ì–´ë…¸í…Œì´ì…˜ ì¢…ë¥˜
+ *                   - @Before				// Targetì˜ JoinPointë¥¼ í˜¸ì¶œí•˜ê¸° ì „ì— ì‹¤í–‰ë˜ëŠ” ì½”ë“œ ì½”ë“œ ìì²´ì— ê´€ì—¬ëŠ” ë¶ˆê°€ëŠ¥í•¨
+ *					 - @AfterReturning		// ëª¨ë“  ì‹¤í–‰ì´ ì •ì‚´ì ìœ¼ë¡œ ì´ë£¨ì–´ì§„ í›„ì— ë™ì‘í•˜ëŠ” ì½”ë“œ
+ *					 - @AfterThrowing		// ì˜ˆì™¸ê°€ ë°œìƒí•œ ë’¤ì— ë™ì‘í•˜ëŠ” ì½”ë“œ
+ *					 - @After				// ì •ìƒì ìœ¼ë¡œ ì‹¤í–‰ë˜ê±°ë‚˜ ì˜ˆì™¸ê°€ ë°œìƒí–ˆì„ ë•Œ êµ¬ë¶„ ì—†ì´ ì‹¤í–‰ë˜ëŠ” ì½”ë“œ
+ *					 - @Around				// ë©”ì„œë“œì˜ ì‹¤í–‰ ìì²´ë¥¼ ì œì–´í•  ìˆ˜ ìˆëŠ” ê°€ì¥ ê°•ë ¥í•œ ì½”ë“œ ì§ì ‘ ëŒ€ìƒ ë©”ì„œë“œë¥¼ í˜¸ì¶œí•˜ê³  ê²°ê³¼ë‚˜ ì˜ˆì™¸ë¥¼ ì²˜ë¦¬ ê°€ëŠ¥í•¨
+* */ 
+@Aspect 	/** @Description : í•´ë‹¹ í´ë˜ìŠ¤ì˜ ê°ì²´ê°€ Aspectë¥¼ êµ¬í˜„ í•œ ê²ƒì„ì„ ë‚˜íƒ€ë‚´ê¸° ìœ„í•¨! */
+@Log4j  	/** @Descriptonn : ë¡œê¹…ìš© */
+@Component 	/** @Description : AOPì™€ ê´€ë ¨ì€ ì—†ì§€ë§Œ Springì—ì„œ Beanì„ ì¸ì‹í•˜ê¸° ìœ„í•´ì„œ ì‚¬ìš©í•¨! --- ì—†ì„ ê²½ìš° AOP ì‘ë™ X */
 public class LogAdvice {
 
-	/**
-	 * @Description : 1) Advice¿Í °ü·Ã ¾î³ëÅ×ÀÌ¼ÇµéÀº ³»ºÎÀûÀ¸·Î PointcutÀ» ÁöÁ¤ÇÔ
-	 *                   PointcutÀº º°µµÀÇ @Pointcut À¸·Îµµ ÁöÁ¤ÀÌ °¡´ÉÇÔ
-	 *                
-	 *                2) ¾Æ·¡ ¸Ş¼­µåÀÇ @Berfoe ¶Ç´Â @After ¾î³ëÅ×ÀÌ¼Ç ³»ºÎÀÇ execution...¹®ÀÚ¿­¤·,¤¤
-	 *                   AspectJÀÇ Æ÷Çö½ÄÀÌ´Ù.  executionÀÇ °æ¿ì Á¢±ÙÁ¦ÇÑÀÚ¿Í Æ¯Á¤ Å¬·¡½ºÀÇ ¸Ş¼­µå¸¦ ÁöÁ¤ÇÒ ¼öÀÖ´Ù
-	 *                   - ¸Ç¾ÕÀÇ "*"ÀÇ ÀÇ¹Ì´Â Á¢±ÙÁ¦ÇÑÀÚ¸¦ ÀÇ¹ÌÇÏ°í ¸ÇµÚÀÇ "*"Àº Å¬·¡½ºÀÇ ÀÌ¸§°ú ¸Ş¼­µåÀÇ ÀÌ¸§À» ÀÇ¹ÌÇÑ´Ù
-	 *              
-	 *                3) Aspect ¾î³ëÅ×ÀÌ¼Ç Á¾·ù
-	 *                   - @Before				// TargetÀÇ JoinPoint¸¦ È£ÃâÇÏ±â Àü¿¡ ½ÇÇàµÇ´Â ÄÚµå ÄÚµå ÀÚÃ¼¿¡ °ü¿©´Â ºÒ°¡´ÉÇÔ
-	 *					 - @AfterReturning		// ¸ğµç ½ÇÇàÀÌ Á¤»ìÀûÀ¸·Î ÀÌ·ç¾îÁø ÈÄ¿¡ µ¿ÀÛÇÏ´Â ÄÚµå
-	 *					 - @AfterThrowing		// ¿¹¿Ü°¡ ¹ß»ıÇÑ µÚ¿¡ µ¿ÀÛÇÏ´Â ÄÚµå
-	 *					 - @After				// Á¤»óÀûÀ¸·Î ½ÇÇàµÇ°Å³ª ¿¹¿Ü°¡ ¹ß»ıÇßÀ» ¶§ ±¸ºĞ ¾øÀÌ ½ÇÇàµÇ´Â ÄÚµå
-	 *					 - @Around				// ¸Ş¼­µåÀÇ ½ÇÇà ÀÚÃ¼¸¦ Á¦¾îÇÒ ¼ö ÀÖ´Â °¡Àå °­·ÂÇÑ ÄÚµå Á÷Á¢ ´ë»ó ¸Ş¼­µå¸¦ È£ÃâÇÏ°í °á°ú³ª ¿¹¿Ü¸¦ Ã³¸® °¡´ÉÇÔ
-	 * */ 
-	
-	
-	
 	@Before( "execution(* org.zerock.service.SampleService*.*(..))" )
 	public void logBefore() {
 		log.info("=============================================");
@@ -40,10 +42,96 @@ public class LogAdvice {
 		log.info("=============================================");
 	}
 	
+	
+	/**
+	 * @Descripton : í•´ë‹¹ ë©”ì„œë“œëŠ” parameterë¥¼ log ì— ë‚¨ê°ˆìˆ˜ìˆë‹¤!
+	 *               ê¸°ì¡´ logë§Œ ë‚¨ê¸°ëŠ”ê²ƒê³¼ ë‹¤ë¥¸ê²ƒì€  execution ë¶€ë¶„ì— ë©”ì„œë“œëª…ê³¼  && argsê°€ ë“¤ì–´ê°„ë‹¤ëŠ” ê²ƒì´ë‹¤
+	 * */
+	@Before( "execution(* org.zerock.service.SampleService*.doAdd(String, String)) && args(str1, str2) " )
+	public void logBeforeWithParams(String str1, String str2) {
+		log.info("params    :: " + str1);
+		log.info("params    :: " + str2);
+	}
+	
+	
+	/** @Description : ë‚˜ì˜ ë°©ë²• í•˜ì§€ë§Œ && argsë¥¼ ì´ìš©í•´ì„œ ì„¤ì •ì€ ê°„ë‹¨íˆ íŒŒë¼ë¯¸í„°ë¥¼ ì°¾ì•„ì„œ ê¸°ë¡í• ë–„ëŠ” 
+	 * 				   ìœ ìš©í•˜ì§€ë§Œ íŒŒë¼ë¯¸í„°ê°€ ë‹¤ë¥¸ ì—¬ëŸ¬ì¢…ë¥˜ì˜ ë©”ì„œë“œì— ì ìš©í•˜ê¸°ì—” 
+	 *  			   ê°„ë‹¨í•˜ì§€ê°€ ì•ŠìŒ ê·¸ë˜ì„œ @Around ì™€ @ProceedingJoinPointë¥¼ ì´ìš©í•´ì„œ í•´ê²°ì´ ê°€ëŠ¥í•¨ 
+	 *  
+	 * @Before( "execution(* org.zerock.service.SampleService*.*(..)) && args(map) "
+	 * ) public void logBeforeWithParamsMapVer(Object map) {
+	 * log.info("params    :: " + map); }
+	 */
 	@After( "execution(* org.zerock.service.SampleService*.*(..))" )
 	public void logAfter() {
 		log.info("=============================================");
 		log.info("==================After======================");
 		log.info("=============================================");
 	}
+	
+	
+	/**
+	 * @Descrption : ì½”ë“œë¥¼ ì‹¤í–‰í•˜ë‹¤ ë³´ë©´ íŒŒë¼ë¯¸í„°ê°’ì´ ì˜ëª»ë˜ì–´ì„œ ì˜ˆì™¸ê°€ ë°œìƒí•˜ëŠ”ë° AOPì˜ @AfterThrowing ì–´ë…¸í…Œì´ì…˜ì„
+	 *               ì‚¬ìš©í•˜ë©´ ì§€ì €ì˜¤ë”˜ ëŒ€ìƒì´ ì˜ˆì™¸ë¥¼ ë°œìƒí•œ í›„ì— ë™ì‘í•˜ë©´ì„œ ë¬¸ì œë¥¼ ì°¾ëŠ”ë° ë„ì›€ì„ ì¤€ë‹¤
+	 * */
+	@AfterThrowing(pointcut = "execution(* org.zerock.service.SampleService*.*(..))", throwing="ex")
+	public void logException(Exception ex) {
+		log.info("Exception !!!!!!");
+		log.info("exception :::: " + ex);
+	}
+	
+	/**
+	 * @Description : @Around ì™€ ProceedingJoinPointë¥¼ ì‚¬ìš©í•˜ë©´ ì¢€ ë” êµ¬ì²´ì ì¸ ì²˜ë¦¬ê°€ ê°€ëŠ¥í•˜ë‹¤
+	 *				  @AroundëŠ” ì¡°ê¸ˆ íŠ¹ë³„í•˜ê²Œ ë™ì‘í•˜ëŠ”ë° ì§ì ‘ ëŒ€ìƒ ë©”ì„œë“œë¥¼ ì‹¤í–‰í•  ìˆ˜ìˆëŠ ê¶Œí•œì„ ê°€ì§€ê³ 
+	 *  			  ë©”ì„œë“œì˜ ì‹¤í–‰ ì „ê³¼ ì‹¤í–‰ í›„ì— ì²˜ë¦¬ê°€ ê°€ëŠ¥í•˜ë‹¤
+	 *  
+	 *   			  @Around ì™€ ProceedingJoinPoint ë‘ê°€ì§€ë¥¼ ê²°í•©í•´ì„œ íŒŒë¼ë¯¸í„°ë‚˜ ì˜ˆì™¸ë“±ì„ í•œë²ˆì— ì²˜ë¦¬ê°€ ê°€ëŠ¥í•˜ë‹¤ 
+	 *   
+	 *   			  @Before ë“±ê³¼ ë‹¬ë¦¬ @Aroundê°€ ì ìš©ë˜ëŠ” ë©”ì„œë“œì˜ ê²½ìš°ì—ëŠ” ë¦¬í„´ íƒ€ì…ì´  voidê°€ ì•„ë‹Œ íƒ€ì…ìœ¼ë¡œ ì„¤ì •í•˜ê³ 
+	 *                ë©”ì„œë“œì˜ ì‹¤í–‰ ê²°ê³¼ ì—­ì‹œ ì§ì ‘ ë°˜í™˜ í˜•íƒœë¡œ ì‘ì„±í•´ì•¼í•œë‹¤
+	 *                
+	 *                ì‹¤í–‰ ê²°ê³¼ë¥¼ ë³´ë©´ @Aroindê°€ ë¨¼ì € ì‹¤í–‰ëœ í›„ @Before ë“±ì´ ì‹¤í–‰ëœ í›„ì— ë©”ì„œë“œê°€ ì‹¤í–‰ë˜ëŠ” ì‹œê°„ì´ ë¡œê·¸ì—
+	 *                ê¸°ë¡ë˜ëŠ”ê²ƒì„ í™•ì¸í•  ìˆ˜ìˆë‹¤.
+	 *                
+	 *                		INFO : org.zerock.aop.LogAdvice - Target  ::: org.zerock.service.SampleServiceImpl@68ace111
+							INFO : org.zerock.aop.LogAdvice - Param   ::: [ABC, 34]
+							INFO : org.zerock.aop.LogAdvice - =============================================
+							INFO : org.zerock.aop.LogAdvice - ==================Before=====================
+							INFO : org.zerock.aop.LogAdvice - =============================================
+							INFO : org.zerock.aop.LogAdvice - params    :: ABC
+							INFO : org.zerock.aop.LogAdvice - params    :: 34
+							INFO : org.zerock.service.SampleServiceImpl - Add Method Start!!!
+							INFO : org.zerock.aop.LogAdvice - TIME ::: 10
+							INFO : org.zerock.aop.LogAdvice - =============================================
+							INFO : org.zerock.aop.LogAdvice - ==================After======================
+							INFO : org.zerock.aop.LogAdvice - ============================================
+	 * */
+	@Around( "execution(* org.zerock.service.SampleService*.*(..))" )
+	public Object logTime( ProceedingJoinPoint pjp ) {
+		
+		long start = System.currentTimeMillis();
+		
+		log.info("TargetClass  ::: " + pjp.getTarget());
+		log.info("Param   ::: " + Arrays.toString(pjp.getArgs())) ;
+		
+		//invoke method (í˜¸ì¶œí•˜ëŠ” ë©”ì„œë“œ)
+		Object result = null;
+		
+		try {
+			result = pjp.proceed();
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		long end = System.currentTimeMillis();
+		
+		log.info("TIME ::: " + (end - start));
+		
+		return result;
+	}
+	
+	
+	
+
 }
