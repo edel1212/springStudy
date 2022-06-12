@@ -1,3 +1,3 @@
 # spring_ex02
 
-AOP
+AOP 설정 및 Transaction 설정
