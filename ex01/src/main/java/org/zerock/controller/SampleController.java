@@ -136,7 +136,7 @@ public class SampleController {
 	}
 	
 	/**
-	 * @description : 굳이 function의 type이 String일 필요는 없다!
+	 * @description : 굳이 method의 type이 String일 필요는 없다!
 	 *                void 형식이여도 가능!! 단 .jsp의 file명은 URL 명을 따른다!
 	 * */
 	@GetMapping("ex05")
@@ -168,7 +168,6 @@ public class SampleController {
 		HttpHeaders header = new HttpHeaders();
 		header.add("Content-Type", "applcation/json;charset=UTF-8");
 		return new ResponseEntity<>(msg, header, HttpStatus.OK);
-		
 	}
 	
 	/**
