@@ -1,6 +1,7 @@
 package org.zerock.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.zerock.mapper.Sample1Mapper;
 import org.zerock.mapper.Sample2Mapper;
 
@@ -16,6 +17,7 @@ public class SampleTxServiceImpl implements SampleTxService{
 	
 	private Sample2Mapper sample2Mapper;
 	
+	@Transactional
 	@Override
 	public void addData(String value) {
 		log.info("addData...");
