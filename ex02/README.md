@@ -6,8 +6,8 @@ AOP 설정 및 Transaction 설정
  - aspectJ 와 aspectJ weaver를 pom에 추가해준다.  
    *주의 
     <org.aspectj-version>1.9.0</org.aspectj-version>
-		  <org.slf4j-version>1.7.25</org.slf4j-version>
-    버전 확인을 꼭하자
+    <org.slf4j-version>1.7.25</org.slf4j-version>
+    버전을 꼭 확인을 하자
     
    => root-context에서 namesapces에서 AOP를 추가해준다 
    => root-context에 aop:aspectj-autoproxy도 추가해준다
