@@ -23,6 +23,13 @@
 	
 	<context:component-scan base-package="org.zerock.controller" />
 	
+	<!-- ============================================== -->
+	<!-- StandardServletMultipartResolver 빈을 스프링에 등록 -->
+	<!-- web.xml에도 설정해줘야함!                           -->
+	<!-- ============================================== -->
+	<beans:bean id="multipartResolver" 
+		class="org.springframework.web.multipart.support.StandardServletMultipartResolver">
+	</beans:bean>
 	
 	
 </beans:beans>

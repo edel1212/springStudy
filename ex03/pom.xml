@@ -80,7 +80,7 @@
 					<artifactId>jmxri</artifactId>
 				</exclusion>
 			</exclusions>
-			<scope>runtime</scope>
+			<!-- <scope>runtime</scope>-->
 		</dependency>
 
 		<!-- @Inject -->
@@ -90,6 +90,9 @@
 			<version>1</version>
 		</dependency>
 				
+		<!-- ==================================== -->
+		<!-- artifactId 명 및 버전 변경을 해줘야한다!!   -->		
+		<!-- ==================================== -->
 		<!-- Servlet -->
 		<!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
 		<dependency>
