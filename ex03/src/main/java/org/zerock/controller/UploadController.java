@@ -69,14 +69,8 @@ public class UploadController {
 	}
 	
 	
-	/**
-	 * @TODO : 확인필요 이어서하자
-	 * */
-	@ResponseBody
 	@PostMapping("uploadAjaxAction")
-	public void uploadAjaxPost(@RequestBody String data) {
-		log.info(data);
-		MultipartFile[] uploadFile = null;
+	public void uploadAjaxPost(MultipartFile[] uploadFile) {
 		log.info("update ajax post ......");
 		
 		String uploadFolder = "C:\\upload";
