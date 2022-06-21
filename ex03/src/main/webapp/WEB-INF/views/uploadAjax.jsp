@@ -15,6 +15,25 @@
 	
 	<script>        
 		"use strict"
+		
+		//확장자 정규식
+		const regex = new RegExp("(.*?)\.(exe|sh\zip|alz)$");
+		//5MB
+		const maxSize = 524880;
+		
+		//허용 검사		
+		const checkExtension = (fileName, fileSize)=>{
+			if(fileSize >= maxSize){
+				alert("파일사이즈 초과");
+				return false;
+			}
+			if(regex.test(fileName)){
+				alert("해당 종류의 파일은 업로드할 수 없습니다.");
+				return false;
+			}
+			return true;
+		} 
+		
 		document.querySelector("#uploadBtn").addEventListener("click",(e)=>{
 			/** 데이터를 담을 객체 */
 			let formData = new FormData();
@@ -25,6 +44,10 @@
 			console.log("files",files);
 			
 			for(let i of files){
+				
+				//검사
+				if(!checkExtension(i.name, i.size)) return;
+				
 				//FormData 객체에 파일을 주입
 				formData.append("uploadFile",i);
 			}//for

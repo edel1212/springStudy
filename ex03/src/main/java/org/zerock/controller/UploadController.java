@@ -1,6 +1,8 @@
 package org.zerock.controller;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -93,5 +95,17 @@ public class UploadController {
 		}//for
 		
 	}
+	
+	/**
+	 * @Description : 오늘 날짜에 맞는 문자열 생성
+	 * */
+	private String getFolder() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar today = Calendar.getInstance();
+		String str = sdf.format(today);
+		//File.separator "-" 를 파일 구문자로 바꾸는 코드
+		return str.replace("-", File.separator);
+	}
+	
 	
 }
