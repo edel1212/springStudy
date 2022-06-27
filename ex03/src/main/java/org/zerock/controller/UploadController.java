@@ -83,7 +83,7 @@ public class UploadController {
 	}
 	
 	
-	@PostMapping("uploadAjaxAction")
+	@PostMapping("/uploadAjaxAction")
 	public void uploadAjaxPost(MultipartFile[] uploadFile) {
 		log.info("update ajax post ......");
 		
@@ -165,7 +165,7 @@ public class UploadController {
 		
 	}
 	
-	@PostMapping(value = "uploadNewAction", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@PostMapping(value = "/uploadNewAction", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public ResponseEntity<List<AttachFileDTO>> uploadNewVerEntity(MultipartFile[] uploadFile){
 		
@@ -177,7 +177,7 @@ public class UploadController {
 		//Make Folder - - - - - -
 		File uploadPath = new File(uploadFolder,uploadFolderPath);
 		
-		if(uploadPath.exists()) { // 해당 디렉토리가 없을경우
+		if(uploadPath.exists()  == false) { // 해당 디렉토리가 없을경우
 			uploadPath.mkdirs();
 		}
 		
@@ -189,7 +189,7 @@ public class UploadController {
 			UUID uuid = UUID.randomUUID();
 			uploadFileName = uuid.toString() + "_" + uploadFileName;
 			try {
-				File saveFile = new File(uploadPath, uploadFileName);
+				File saveFile = new File(uploadPath,uploadFileName); 
 				multipartFile.transferTo(saveFile);
 				
 				attachDTO.setUuid(uuid.toString());
@@ -206,11 +206,10 @@ public class UploadController {
 				
 				list.add(attachDTO);
 			} catch (Exception e) {
-				// TODO: handle exception
 				e.printStackTrace();
 			}
 		}
-		
+		/**@See : HttpStatus.? 를 BadGateway로 하여도 return 및 파일은 만들어짐 다만 console에 해당 상태에 맞는 에러 로그는 뜸*/
 		return new ResponseEntity<List<AttachFileDTO>>(list, HttpStatus.OK);
 	}
 	
@@ -235,7 +234,6 @@ public class UploadController {
 			log.info("contentType ::: " + contentType);
 			return contentType.startsWith("image");
 		} catch (Exception e) {
-			// TODO: handle exception
 			e.printStackTrace();
 		}
 		return false;
