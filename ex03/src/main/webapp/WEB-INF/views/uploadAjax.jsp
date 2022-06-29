@@ -137,13 +137,22 @@
 						const uploadRstUL = document.querySelector(".uploadResult ul");
 						let str = "";
 						data.forEach((obj)=>{
-						    str += "<li>"+obj['fileName']+"</li>"
+							if(!obj['image']){
+								str += "<li style='display:flex'><img style='width:25px;margin-right:5px;' src='/resources/img/file.png'>"+obj['fileName']+"</li>";
+							} else { 
+								const fileCallPath = obj['uploadPath']+"\s_"+obj['uuid']+"_"+obj['fileName'];
+								console.log("fileCallPath",fileCallPath);
+							    str += "<li style='display:flex'>";
+							   	<!-- 경로에 주의하자 / 앞에 써주자 .. 상대경로로 해야해 .. -->
+							    str +=  "<img style='width:25px;margin-right:5px;' src='/display?fileName="+fileCallPath+"'>";
+							    str +=  obj['fileName'];
+							    str +=  "</li>";
+							}
 						})
 						uploadRstUL.insertAdjacentHTML("beforeEnd",str );
 			      })
 			      .catch((error) => console.log(error));
 		});
-		
 		
 	</script>
 </body>

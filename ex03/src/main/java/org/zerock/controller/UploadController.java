@@ -9,11 +9,13 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -213,7 +215,6 @@ public class UploadController {
 		return new ResponseEntity<List<AttachFileDTO>>(list, HttpStatus.OK);
 	}
 	
-	
 	/**
 	 * @Description : 오늘 날짜에 맞는 문자열 생성
 	 * */
@@ -237,5 +238,50 @@ public class UploadController {
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	/**
+	 * @Descirption : @Params으로 받은 이름을 기준으로
+	 *                파일의 이미지를 가져오는 메서드
+	 *                
+	 *                <byte[]>로 이미지 파일의 데이터를 전송할 떄 신경 써야 
+	 *                할것은 브라우저에 보여줘야하는 MINE 타입이 파일의 종류에 따라
+	 *                달라지므로 header에 add를 해줘서 처리!
+	 *                
+	 * @See         : header에 MINE 타입을 정해주지 않으면 이미지도 깨진 글씨로 나옴!               
+	 *                
+	 * */
+	@GetMapping("/display")
+	@ResponseBody
+	public ResponseEntity<byte[]> getFile(String fileName){
+		log.info("fileName :: " + fileName);
+		
+		File file = new File("C:\\upload\\"+fileName);
+		
+		log.info("file :: " + file);
+	
+		ResponseEntity<byte[]> result = null;
+		
+		try {
+			//Content-Type 을 담아줄 Header 객체
+			HttpHeaders header = new HttpHeaders();
+			
+			/** @Description : 해당파일의 확장자로 MINE 타입을 반환합니다 */
+			header.add("Content-Type", Files.probeContentType(file.toPath()));
+			
+			log.info("header ::: " + header); //header ::: [Content-Type:"image/png"]
+			
+			/**
+			 * @Description : FileCopyUtils.copyToByteArray() 란?
+			 * 				  지정한 Reader의 내용들을 String에 copy한다 완료되면 Reader를 닫는다.
+			 * 				  리턴값은 카피된 String을 리턴한다(빈값이 들어올수있다.)
+			 * */
+			result = new ResponseEntity<byte[]>(FileCopyUtils.copyToByteArray(file),header,HttpStatus.OK);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 }
