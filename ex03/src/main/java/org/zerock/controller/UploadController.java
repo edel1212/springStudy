@@ -9,6 +9,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -284,4 +286,36 @@ public class UploadController {
 		
 		return result;
 	}
+	
+	/***
+	 * @Description : 첨부파일 다운로드는 서버에서 MIME 타입을 다운로드로 지정하고, 적절한 
+	 *                헤더 메세지를 통해서 다운로드 이름을 지정해서 처리하게 해야하낟.
+	 *                
+	 *                🎉여서 중요한건 이미지와 달리 다운로드는 MIME타입이 고정되어어서
+	 *                produces= MediaType.APPLICATION_OCTET_STREAM_VALUE
+	 *                (application/octet-stream) 로 지정!  
+	 *                
+	 *                ResponseEntity<byte[]>를 사용해서 구현할 수 있지만
+	 *                아래의 예제는 <Resource>를 이용해서 좀 더 간단하게 처리
+	 *                
+	 * */
+	@GetMapping(value="/Testdownload", produces= MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	@ResponseBody
+	public ResponseEntity<Resource> downloadFile(String fileName){
+		log.info("download FileName ::: " + fileName);
+		
+		Resource resource = new FileSystemResource("c:\\upload\\"+fileName);
+		
+		log.info("resource ::: " + resource);
+		
+		/**
+		 * @See : 해당 경로로 요청 시 브라우저 상에는 아무런 반응이 없지만 서버에는 로그가 찍힘!
+		 *        INFO : org.zerock.controller.UploadController - download FileName ::: /2022/06/27/file.png
+		 *		  INFO : org.zerock.controller.UploadController - resource ::: file [c:\\upload\2022\06\27\file.png]
+		 *	
+		 * **/
+		
+		return null;
+	}
+	
 }

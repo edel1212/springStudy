@@ -140,8 +140,13 @@
 							if(!obj['image']){
 								str += "<li style='display:flex'><img style='width:25px;margin-right:5px;' src='/resources/img/file.png'>"+obj['fileName']+"</li>";
 							} else { 
-								const fileCallPath = obj['uploadPath']+"\s_"+obj['uuid']+"_"+obj['fileName'];
-								console.log("fileCallPath",fileCallPath);
+								/**
+								 * @See : encodeURIComponent()를 사용해주지 않으면 
+								          "요청 타겟에서 유효하지 않은 문자가 발견되었습니다. 유효한 문자들은 RFC 7230과 RFC 3986에 정의되어 있습니다."
+								          라는 에러난다!
+								*/
+								const fileCallPath =  encodeURIComponent( obj['uploadPath'] + "/" +"s_"+obj['uuid']+"_"+obj['fileName']);
+								
 							    str += "<li style='display:flex'>";
 							   	<!-- 경로에 주의하자 / 앞에 써주자 .. 상대경로로 해야해 .. -->
 							    str +=  "<img style='width:25px;margin-right:5px;' src='/display?fileName="+fileCallPath+"'>";
