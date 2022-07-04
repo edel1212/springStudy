@@ -2,6 +2,8 @@ package org.zerock.controller;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.ObjectInputFilter.Status;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.zerock.domain.AttachFileDTO;
@@ -32,11 +35,38 @@ import net.coobird.thumbnailator.Thumbnailator;
 public class UploadController {
 	
 	/**
-	 * 일반 POST방식
-	 * */
+	 * @Description : 일반 POST방식
+	 * 
+	 * @See 		: uploadForm.jsp
+	 * 
+	 *                문제) ❌해당 URL을 사용해서 uploadFormAction로 POST 파일 업로드시
+	 *					   한글이 깨진다.  
+	 *				
+	 *				  이유) 클라이언트에서 euc-kr로 인코딩 되어 utf-8 인코딩 셋을 
+	 *					   사용하는 서버로 전송되는 과정에서 한글이 깨지는 것이다.
+	 *		
+	 *
+	 *  			  해결방법) accept-charset="UTF-8"를 form에 추가해준다.
+	 *  					  폼 데이터를 서버로 전송할 때 사용되는 문자 인코딩(character encoding) 방식을 명시하는 것이다.
+	 *                        - ex) <from ... enctype="multipart/form-data"  accept-charset="UTF-8">
+	 *                 
+ 	 * */
 	@GetMapping("/uploadForm")
 	public void uploadForm() {
 		log.info("upload form");
+	}
+	
+	/**
+	 * @Desription :  비동기 통신 방식
+	 * 
+	 * @See 		: uploadAjax.jsp
+	 * 
+	 *                ✔ 해당 URL을 사용해서 uploadFormAction로 POST 파일 업로드시
+	 *					 한글이 깨지지 않는다!!
+	 * */
+	@GetMapping("/uploadAjax")
+	public void uploadAjax() {
+		log.info("upload ajax");
 	}
 	
 	/**
@@ -75,17 +105,6 @@ public class UploadController {
 			
 		}
 	}
-	
-	/**
-	 * @Desription :  비동기 통신 방식
-	 * 
-	 * @See 		: uploadAjax.jsp
-	 * */
-	@GetMapping("/uploadAjax")
-	public void uploadAjax() {
-		log.info("upload ajax");
-	}
-	
 	
 	@PostMapping("/uploadAjaxAction")
 	public void uploadAjaxPost(MultipartFile[] uploadFile) {
@@ -169,6 +188,9 @@ public class UploadController {
 		
 	}
 	
+	/**
+	 * @Description : 파일의 정보를 가지고있는 AttachFileDTO를 사용한 방법
+	 * */
 	@PostMapping(value = "/uploadNewAction", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public ResponseEntity<List<AttachFileDTO>> uploadNewVerEntity(MultipartFile[] uploadFile){
@@ -301,7 +323,7 @@ public class UploadController {
 	 * */
 	@GetMapping(value="/Testdownload", produces= MediaType.APPLICATION_OCTET_STREAM_VALUE)
 	@ResponseBody
-	public ResponseEntity<Resource> downloadFile(String fileName){
+	public ResponseEntity<Resource> testDownloadFile(String fileName){
 		log.info("download FileName ::: " + fileName);
 		
 		Resource resource = new FileSystemResource("c:\\upload\\"+fileName);
@@ -317,5 +339,65 @@ public class UploadController {
 		
 		return null;
 	}
+	
+	
+	/**
+	 * @Desription : 1) MINE 타입은 다운로드를 할수있는 'application/octet-steam'으로 지정
+	 * 
+	 *               2) 다운로드시 저장 되는 이름은 'Content-Disposition'을 이용하여 지정
+	 *                  - 사용 이유는 파일 이름에 대한 문자열 처리는 파일 이름이 한글인 경우 지정할 떄 깨지는 문제를 막기 위해서임 
+	 *               
+	 *               3) @RequestHeader("User-Agent") String userAgent를 이용하여 브라우저의 정류나 모바일인지 데스크탑인지
+	 *                  브라우저 프로그램 종류등을 알수 있다.
+	 * **/
+	@GetMapping(value = "/download" , produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	@ResponseBody
+	public ResponseEntity<Resource> downloadFile(@RequestHeader("User-Agent") String userAgent // 디바이스의 정보를 할수있 정보
+												,String fileName){ //파일명 기간+파일명
+		
+		log.info("fileName :::" + fileName);//fileName :::/2022/06/27/file.png
+		
+		log.info("userAgent ::: " + userAgent);
+		/**userAgent ::: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) 
+		* Chrome/103.0.0.0 Safari/537.36
+		*/
+		
+		//지정경로의 File을 가져와 객체로만듬
+		Resource resource = new FileSystemResource("c://upload//"+fileName);
+	
+		log.info("resource ::: " + resource) ;// resource ::: file [c:\\upload\2022\06\27\file.png]
+		
+		if(resource.exists() == false) { //resource가 존재하지 않을 경우!
+			return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
+		}
+		
+		/**
+		 * 등등 브라우저를 나눠서 처리도 가능함!  
+		 * */
+		if(userAgent.contains("Edge")) {
+			log.info("Edge!!!");
+		}
+		
+		String resoucreName = resource.getFilename();
+		
+		log.info("resoucreName::: " + resoucreName);//resoucreName::: file.png
+		
+		HttpHeaders headers = new HttpHeaders();
+		
+		try {
+			headers.add(
+							  "Content-Disposition"
+							, "attachment ; filename = " + new String(resoucreName.getBytes("UTF-8")
+							, "ISO-8859-1")
+						);
+			log.info("headers ::: " + headers);//headers ::: [Content-Disposition:"attachment ; filename = file.png"]
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		
+		return new ResponseEntity<Resource>(resource,headers,HttpStatus.OK);
+		
+	}
+	
 	
 }

@@ -23,48 +23,48 @@
 	<script>        
 		"use strict"
 		
-		//È®ÀåÀÚ Á¤±Ô½Ä
+		//í™•ìž¥ìž ì •ê·œì‹
 		const regex = new RegExp("(.*?)\.(exe|sh\zip|alz)$");
 		//5MB
 		const maxSize = 524880;
 		
-		//Çã¿ë °Ë»ç		
+		//í—ˆìš© ê²€ì‚¬		
 		const checkExtension = (fileName, fileSize)=>{
 			if(fileSize >= maxSize){
-				alert("ÆÄÀÏ»çÀÌÁî ÃÊ°ú");
+				alert("íŒŒì¼ì‚¬ì´ì¦ˆ ì´ˆê³¼");
 				return false;
 			}
 			if(regex.test(fileName)){
-				alert("ÇØ´ç Á¾·ùÀÇ ÆÄÀÏÀº ¾÷·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.");
+				alert("í•´ë‹¹ ì¢…ë¥˜ì˜ íŒŒì¼ì€ ì—…ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
 				return false;
 			}
 			return true;
 		} 
 		
 		/******************/
-		/*** DTO Àû¿ë  Àü **/
+		/*** DTO ì ìš©  ì „ **/
 		/*****************/
 		document.querySelector("#uploadBtn").addEventListener("click",(e)=>{
-			/** µ¥ÀÌÅÍ¸¦ ´ãÀ» °´Ã¼ */
+			/** ë°ì´í„°ë¥¼ ë‹´ì„ ê°ì²´ */
 			let formData = new FormData();
 			/** target Input */
 			let inputFile = document.querySelector("input[name='fuploadFile']");
-			/** ¹è¿­ ÇüÅÂ·Î µ¥ÀÌÅÍ¸¦ ³ª¿­ */
+			/** ë°°ì—´ í˜•íƒœë¡œ ë°ì´í„°ë¥¼ ë‚˜ì—´ */
 			let files = inputFile.files;
 			
 			for(let i of files){
-				//°Ë»ç
+				//ê²€ì‚¬
 				if(!checkExtension(i.name, i.size)) return;
-				//FormData °´Ã¼¿¡ ÆÄÀÏÀ» ÁÖÀÔ
+				//FormData ê°ì²´ì— íŒŒì¼ì„ ì£¼ìž…
 				formData.append("uploadFile",i);
 			}//for
 			
 			/** @Desciption :
-				1) formData´Â console.log·Î º¸ÀÌÁö ¾ÊÀ½ º¸¾È Á¤Ã¥ ¶§¹®ÀÓ!!
+				1) formDataëŠ” console.logë¡œ ë³´ì´ì§€ ì•ŠìŒ ë³´ì•ˆ ì •ì±… ë•Œë¬¸ìž„!!
 				   - console.log("formData",formData);
 		
-				2) formData¸¦ º¸³¾¶§, header ºÎºÐÀº ºê¶ó¿ìÀú°¡ ÀÚµ¿À¸·Î ¼³Á¤ÇØÁÖ±â ¶§¹®¿¡
-				   Content-TypeÀ» application/x-www-form-urlencoded ..µî µû·Î ÁöÁ¤ÇÒ ÇÊ¿ä°¡ ¾ø½À´Ï´Ù.
+				2) formDataë¥¼ ë³´ë‚¼ë•Œ, header ë¶€ë¶„ì€ ë¸Œë¼ìš°ì €ê°€ ìžë™ìœ¼ë¡œ ì„¤ì •í•´ì£¼ê¸° ë•Œë¬¸ì—
+				   Content-Typeì„ application/x-www-form-urlencoded ..ë“± ë”°ë¡œ ì§€ì •í•  í•„ìš”ê°€ ì—†ìŠµë‹ˆë‹¤.
 
 			*/
 			for (let key of formData.keys()) {
@@ -78,7 +78,7 @@
 			fetch("/uploadAjaxAction",
 				{
 			      method: "POST",
-			      /* no-cache °ªÀº ´ëºÎºÐÀÇ ºê¶ó¿ìÀú¿¡¼­ max-age=0 °ú µ¿ÀÏÇÑ ¶æÀ» °¡Áý´Ï´Ù. Áï, Ä³½Ã´Â ÀúÀåÇÏÁö¸¸ »ç¿ëÇÏ·Á°í ÇÒ ¶§¸¶´Ù ¼­¹ö¿¡ Àç°ËÁõ ¿äÃ»À» º¸³»¾ß ÇÕ´Ï´Ù.  */
+			      /* no-cache ê°’ì€ ëŒ€ë¶€ë¶„ì˜ ë¸Œë¼ìš°ì €ì—ì„œ max-age=0 ê³¼ ë™ì¼í•œ ëœ»ì„ ê°€ì§‘ë‹ˆë‹¤. ì¦‰, ìºì‹œëŠ” ì €ìž¥í•˜ì§€ë§Œ ì‚¬ìš©í•˜ë ¤ê³  í•  ë•Œë§ˆë‹¤ ì„œë²„ì— ìž¬ê²€ì¦ ìš”ì²­ì„ ë³´ë‚´ì•¼ í•©ë‹ˆë‹¤.  */
 			      cache: 'no-cache',
 			      body: formData 
 			    })
@@ -95,20 +95,20 @@
 		
 		
 		/******************/
-		/*** DTO Àû¿ë  ÈÄ **/
+		/*** DTO ì ìš©  í›„ **/
 		/*****************/
 		document.querySelector("#uploadNewBtn").addEventListener("click",(e)=>{
-			/** µ¥ÀÌÅÍ¸¦ ´ãÀ» °´Ã¼ */
+			/** ë°ì´í„°ë¥¼ ë‹´ì„ ê°ì²´ */
 			let formData = new FormData();
 			/** target Input */
 			let inputFile = document.querySelector("input[name='fuploadFile']");
-			/** ¹è¿­ ÇüÅÂ·Î µ¥ÀÌÅÍ¸¦ ³ª¿­ */
+			/** ë°°ì—´ í˜•íƒœë¡œ ë°ì´í„°ë¥¼ ë‚˜ì—´ */
 			let files = inputFile.files;
 			
 			for(let i of files){
-				//°Ë»ç
+				//ê²€ì‚¬
 				if(!checkExtension(i.name, i.size)) return;
-				//FormData °´Ã¼¿¡ ÆÄÀÏÀ» ÁÖÀÔ
+				//FormData ê°ì²´ì— íŒŒì¼ì„ ì£¼ìž…
 				formData.append("uploadFile",i);
 			}//for
 			
@@ -123,17 +123,17 @@
 			fetch("/uploadNewAction",
 				{
 			      method: "POST",
-			      /* no-cache °ªÀº ´ëºÎºÐÀÇ ºê¶ó¿ìÀú¿¡¼­ max-age=0 °ú µ¿ÀÏÇÑ ¶æÀ» °¡Áý´Ï´Ù. Áï, Ä³½Ã´Â ÀúÀåÇÏÁö¸¸ »ç¿ëÇÏ·Á°í ÇÒ ¶§¸¶´Ù ¼­¹ö¿¡ Àç°ËÁõ ¿äÃ»À» º¸³»¾ß ÇÕ´Ï´Ù.  */
+			      /* no-cache ê°’ì€ ëŒ€ë¶€ë¶„ì˜ ë¸Œë¼ìš°ì €ì—ì„œ max-age=0 ê³¼ ë™ì¼í•œ ëœ»ì„ ê°€ì§‘ë‹ˆë‹¤. ì¦‰, ìºì‹œëŠ” ì €ìž¥í•˜ì§€ë§Œ ì‚¬ìš©í•˜ë ¤ê³  í•  ë•Œë§ˆë‹¤ ì„œë²„ì— ìž¬ê²€ì¦ ìš”ì²­ì„ ë³´ë‚´ì•¼ í•©ë‹ˆë‹¤.  */
 			      cache: 'no-cache',
 			      body: formData 
 			    })
 			      .then((response) => response.json())
 			      .then((data) => {
 						console.log("data",data);
-						//file input ÃÊ±âÈ­
+						//file input ì´ˆê¸°í™”
 						document.querySelector("input[name='fuploadFile']").value = null;
 						
-						//ÆÄÀÏ ¸ñ·Ï »ý¼º
+						//íŒŒì¼ ëª©ë¡ ìƒì„±
 						const uploadRstUL = document.querySelector(".uploadResult ul");
 						let str = "";
 						data.forEach((obj)=>{
@@ -141,14 +141,14 @@
 								str += "<li style='display:flex'><img style='width:25px;margin-right:5px;' src='/resources/img/file.png'>"+obj['fileName']+"</li>";
 							} else { 
 								/**
-								 * @See : encodeURIComponent()¸¦ »ç¿ëÇØÁÖÁö ¾ÊÀ¸¸é 
-								          "¿äÃ» Å¸°Ù¿¡¼­ À¯È¿ÇÏÁö ¾ÊÀº ¹®ÀÚ°¡ ¹ß°ßµÇ¾ú½À´Ï´Ù. À¯È¿ÇÑ ¹®ÀÚµéÀº RFC 7230°ú RFC 3986¿¡ Á¤ÀÇµÇ¾î ÀÖ½À´Ï´Ù."
-								          ¶ó´Â ¿¡·¯³­´Ù!
+								 * @See : encodeURIComponent()ë¥¼ ì‚¬ìš©í•´ì£¼ì§€ ì•Šìœ¼ë©´ 
+								          "ìš”ì²­ íƒ€ê²Ÿì—ì„œ ìœ íš¨í•˜ì§€ ì•Šì€ ë¬¸ìžê°€ ë°œê²¬ë˜ì—ˆìŠµë‹ˆë‹¤. ìœ íš¨í•œ ë¬¸ìžë“¤ì€ RFC 7230ê³¼ RFC 3986ì— ì •ì˜ë˜ì–´ ìžˆìŠµë‹ˆë‹¤."
+								          ë¼ëŠ” ì—ëŸ¬ë‚œë‹¤!
 								*/
 								const fileCallPath =  encodeURIComponent( obj['uploadPath'] + "/" +"s_"+obj['uuid']+"_"+obj['fileName']);
 								
 							    str += "<li style='display:flex'>";
-							   	<!-- °æ·Î¿¡ ÁÖÀÇÇÏÀÚ / ¾Õ¿¡ ½áÁÖÀÚ .. »ó´ë°æ·Î·Î ÇØ¾ßÇØ .. -->
+							   	<!-- ê²½ë¡œì— ì£¼ì˜í•˜ìž / ì•žì— ì¨ì£¼ìž .. ìƒëŒ€ê²½ë¡œë¡œ í•´ì•¼í•´ .. -->
 							    str +=  "<img style='width:25px;margin-right:5px;' src='/display?fileName="+fileCallPath+"'>";
 							    str +=  obj['fileName'];
 							    str +=  "</li>";
