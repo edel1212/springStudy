@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -137,27 +137,66 @@
 						const uploadRstUL = document.querySelector(".uploadResult ul");
 						let str = "";
 						data.forEach((obj)=>{
+							
+							const FileDownCallPath =  encodeURIComponent( obj['uploadPath'] + "/" +obj['uuid']+"_"+obj['fileName']);
+							
 							if(!obj['image']){
-								str += "<li style='display:flex'><img style='width:25px;margin-right:5px;' src='/resources/img/file.png'>"+obj['fileName']+"</li>";
+								str += "<li style='display:flex'><img style='width:25px;margin-right:5px;' src='/resources/img/file.png'>";
+								str +=  "<a href='";
+							    str +=  "download?fileName=" +FileDownCallPath;
+							    str += "'>";
+							    str +=  obj['fileName'];
+							    str +=  "</a>";
+							    str +=  "<button data-file=";
+							    str +=  FileDownCallPath + " data-type='file'";
+							    str += ">X</button>";
+								str += "</li>";
 							} else { 
 								/**
 								 * @See : encodeURIComponent()를 사용해주지 않으면 
 								          "요청 타겟에서 유효하지 않은 문자가 발견되었습니다. 유효한 문자들은 RFC 7230과 RFC 3986에 정의되어 있습니다."
 								          라는 에러난다!
 								*/
-								const fileCallPath =  encodeURIComponent( obj['uploadPath'] + "/" +"s_"+obj['uuid']+"_"+obj['fileName']);
-								
+								const thumFileCallPath =  encodeURIComponent( obj['uploadPath'] + "/" +"s_"+obj['uuid']+"_"+obj['fileName']);
 							    str += "<li style='display:flex'>";
 							   	<!-- 경로에 주의하자 / 앞에 써주자 .. 상대경로로 해야해 .. -->
-							    str +=  "<img style='width:25px;margin-right:5px;' src='/display?fileName="+fileCallPath+"'>";
+							    str +=  "<img style='width:25px;margin-right:5px;' src='/display?fileName="+thumFileCallPath+"'>";
+							    str +=  "<a href='";
+							    str +=  "download?fileName=" +FileDownCallPath;
+							    str += "'>";
 							    str +=  obj['fileName'];
+							    str +=  "</a>";
+							    str +=  "<button data-file=";
+							    str +=  thumFileCallPath + " data-type='image'";
+							    str += ">X</button>";
 							    str +=  "</li>";
-							}
+							}//if-else
 						})
 						uploadRstUL.insertAdjacentHTML("beforeEnd",str );
+						
+						document.querySelector(".uploadResult ul").addEventListener("click",(e)=>{
+							const target = e.target;
+							if(target.nodeName !== 'BUTTON'){
+								return;
+							}
+							const data = target.dataset.file;
+							const type = target.dataset.type;
+							fetch("/deleteFile",{
+								method : "POST",
+								cache : "no-cache",
+								headers: {'Content-Type': 'application/json'},
+								body : JSON.stringify({fileName : data, type : type})
+							}).then((response)=>{
+									debugger;
+									response
+								})
+							.then(result=>console.log(result))
+							.catch((error) => console.log(error));
+						});
 			      })
 			      .catch((error) => console.log(error));
 		});
+		
 		
 	</script>
 </body>

@@ -2,7 +2,7 @@ package org.zerock.controller;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.ObjectInputFilter.Status;
+import java.net.URLDecoder;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
@@ -11,6 +11,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -321,7 +325,7 @@ public class UploadController {
 	 *                아래의 예제는 <Resource>를 이용해서 좀 더 간단하게 처리
 	 *                
 	 * */
-	@GetMapping(value="/Testdownload", produces= MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	@GetMapping(value="/testdownload", produces= MediaType.APPLICATION_OCTET_STREAM_VALUE)
 	@ResponseBody
 	public ResponseEntity<Resource> testDownloadFile(String fileName){
 		log.info("download FileName ::: " + fileName);
@@ -371,23 +375,32 @@ public class UploadController {
 			return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
 		}
 		
+		/***
+		 * @Description : 파일 다운로드시 UUID 명 삭제
+		 * 
+		 * @See         : 여기서 중요한건 파일 다운로드시 파일명은 HttpHeaders에서 정해진다는
+		 *                것이다!!!!!
+		 * **/
+		String resoucreName = resource.getFilename();
+		
 		/**
 		 * 등등 브라우저를 나눠서 처리도 가능함!  
 		 * */
 		if(userAgent.contains("Edge")) {
 			log.info("Edge!!!");
 		}
-		
-		String resoucreName = resource.getFilename();
+		String resourceOriginalName =	resoucreName.substring(resoucreName.lastIndexOf("_")+1);
 		
 		log.info("resoucreName::: " + resoucreName);//resoucreName::: file.png
+		log.info("resourceOriginalName::: " + resourceOriginalName);//resoucreName::: file.png
 		
 		HttpHeaders headers = new HttpHeaders();
 		
 		try {
 			headers.add(
 							  "Content-Disposition"
-							, "attachment ; filename = " + new String(resoucreName.getBytes("UTF-8")
+//							, "attachment ; filename = " + new String(resoucreName.getBytes("UTF-8")
+							, "attachment ; filename = " + new String(resourceOriginalName.getBytes("UTF-8")
 							, "ISO-8859-1")
 						);
 			log.info("headers ::: " + headers);//headers ::: [Content-Disposition:"attachment ; filename = file.png"]
@@ -398,6 +411,45 @@ public class UploadController {
 		return new ResponseEntity<Resource>(resource,headers,HttpStatus.OK);
 		
 	}
+	
+	@PostMapping("/deleteFile")
+	@ResponseBody
+	public ResponseEntity<String> deleteFile(@RequestBody String req) throws Exception{
+		/**
+		 * @Description : 문자열로 받은 req를 gson(json-simple 를 pom에 추가)을
+		 *  			  사용해서 JSON 형식으로 파싱하여 사용! jackson이 메이븐에 추가 
+		 *  			  되어있다면 VO가 있다면 자동으로 파싱해줌!
+		 * **/
+		JSONParser parser = new JSONParser();
+		JSONObject jsonObject = (JSONObject) parser.parse(req);	
+		log.info("jsonObject  ::: "  + jsonObject);
+		
+		log.info("fileName  ::: " + jsonObject.get("fileName"));
+		String fileName = (String) jsonObject.get("fileName");
+		
+		log.info("type  ::: " +jsonObject.get("type"));
+		String type = (String) jsonObject.get("type");
+		
+		File file;
+		
+		try {
+			file = new File("C:\\upload\\"+ URLDecoder.decode(fileName,"UTF-8"));
+			file.delete(); //파일 삭제
+			
+			if("image".equals(type)) {
+				String largeFileName = file.getAbsolutePath().replace("s_", "");
+				file = new File(largeFileName);
+				file.delete();
+			}
+		} catch (UnsupportedEncodingException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+		}
+		
+		return new ResponseEntity<String>("delete",HttpStatus.OK);
+	}
+
 	
 	
 }

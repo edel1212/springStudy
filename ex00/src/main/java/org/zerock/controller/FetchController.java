@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.zerock.domain.BoardVO;
 import org.zerock.service.BoardService;
@@ -41,8 +42,35 @@ public class FetchController {
 	 *           
 	 *           *consumes에서는 화면에서 받아오는 데이터형식을 정의 하므로
 	 *           화면서에서 요청시에도 헤더에서도 같은 형식으로 보내줘야하고
+	 *           ex) 
+	 * 		         @GetMapping("/test", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	 *				 @ResponseBody
+	 *			     public String hello(){
+	 *			    	return "hello";
+	 *			     }
+	 *			     - 위와 같이 작성하면 서버에서 이핸들러에서는 body에 담긴 데이터 타입이 
+	 *			       APPLIACTION_JSON_UTF8일 경우의 요청만을 처리한다는 의미입니다.
+	 *				   따라서 요청시 헤더에 꼭 application/json 이 존재해야합니다.
+	 *			     
 	 *           
 	 *           *produces에서는 반환할 데이터형식을 정의해주는것이다!
+	 *           ex) 
+	 *           	@PostMapping( value ="/hello", produces = MediaType.TEXT_PLAIN_VALUE)
+	 *				@ResponseBody
+	 *				public String hello(){
+	 *					return "hello";
+	 *			 	}
+     *				- 위 와같은 경우 응답 타입을 TEXT_PLAIN_VALUE으로만 하겠다는 의미이다.
+     *				  아래 코드로 test해보면 406 Error 가 나는것 을 볼수있다.
+	 *                mockMvc.perform(post("/hello")
+	 *		    		.accept(MediaType.APPLICATION_JSON_UTF8))
+	 *		            .andDo(print())
+	 *		            .andExpect(status().isOK());
+	 *           
+	 *           ✔ 알아둘 사항
+	 *           	html form 태그를 사용하여 post 방식으로 요청하거나
+	 *				JQuery의 ajax 등의 요청을 할 때 default Content-Type은 "application/json"이 아니라
+	 *				"application/x-www-form-urlencoded'이다.✔
 	 *           
 	 * */
 	
@@ -72,5 +100,21 @@ public class FetchController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
+	/**
+	 * ✔✔ 굳이 fetch 에서 데이터를 받아올때 constorller 단에서 VO가 있을필요가 없음 ✔✔
+	 * 		public ResponseEntity<BoardVO> getBoardEntityVer(@RequestBody String vo) {
+	 * 		요렇게 해도 잘 받아옴!!
+	 * 		
+	 * 		ex)
+	 * 			@PostMapping("/deleteFile")
+	 *		@ResponseBody
+	 *		public ResponseEntity<String> deleteFile(@RequestBody String req){
+	 *			
+	 *			//단 문자열이기에 meavn에서 받은 jackson을 사용하여 파싱해서 써야함!
+	 *			log.info("req ::: " + req);
+	 *		
+	 *			return new ResponseEntity<String>(HttpStatus.OK);
+	 *		}
+	 * 	 * */
 	
 }
