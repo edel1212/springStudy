@@ -11,7 +11,8 @@ File 업로드 및 다운로드
     2) pom(메이븐) 설정은 javax.servlet 버전을 바꿔줘야함 ! [artifactId 명도 다름]
     3) @RequestBody를 사용해서 json 데이터를 문자열로 받은 수 있지만 다시 파시을 위해 gson을 메이븐에 추가하여 사용
  - UploadController.java 의  uploadNewVerEntity(MultipartFile[] uploadFile) 확인 
- 
+    4) web.xml에 servlet 버전 변경으로 인해 버전 변경 및 multipart 설정 추가 필요
+    5) serlvet.xml 에도 multipart 관련 bean 주입 필요!
  
 2) 파일 다운로드 및 삭제
  - UploadController.java 
