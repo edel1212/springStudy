@@ -49,4 +49,5 @@ JDBC, DI test and default   setting
   	
 
 9) JDBC POM
-  - 해당DB jdbc , connectionPool,  mybatis, mybatis-spring  	,spring-jdbc
+  - 해당DB jdbc , connectionPool[히카리 사용],  mybatis, mybatis-spring  	,spring-jdbc , org.bgee.log4jdbc-log4j2
+  - 또 하나 중요한건 pom 하단 maven-compiler-plugin 버전을 내가 상단 사용하는 java 버전와 맞춰주자 이유는 @See : pom.xml 최하단 주석 확인

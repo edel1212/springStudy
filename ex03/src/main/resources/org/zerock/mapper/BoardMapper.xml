@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="org.zerock.mapper.BoardMapper">
+  
+  	<select id="getOldFiles" resultType="org.zerock.domain.BoardAttachVO">
+  		SELECT * FROM tbl_attach 	<!-- 현재 날짜에서 하루를 뺸 날짜 -->
+  		WHERE uploadPath = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 DAY) , '%Y\%m\%d') 
+  	</select>
+  	
+  </mapper>

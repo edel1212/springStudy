@@ -18,3 +18,16 @@ File 업로드 및 다운로드
  - UploadController.java 
  	downloadFile(@RequestHeader("User-Agent") String userAgent ,String fileName) 확인 
  	deleteFile(@RequestBody String req) 확인 
+
+ 	
+3) 잘못 업데이트 된 파일 삭제
+ - Quartz 라이브러리를 사용 
+   => 해당 라이브러리는 일반적으로 스케줄러를 구성하기 위해서 사용한다 내가 설정한 주기별로 특정 프로그램을 실행할수 있다
+      대량의 데이터를 주기적으로 읽고 쓰는 작업은 Spring Batch 가 적합하지만 설정이 좀 더 복잡함으로 해당
+      라이브러리로 처리함.
+   => 방법) 1) pom에 quartz, quartz-jobs를 추가
+           2) root-context의 Namespaces에 task를 추가 후  <task-annotation-driven/>을 추가
+           3) task를 지정할 패키지 및 파일 생성 후 해당 파일을 root-context에서 context-scan 시킨다. 
+              @See :     FileCheckTast.java
+              
+                          

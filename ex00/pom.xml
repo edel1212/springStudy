@@ -108,13 +108,6 @@
 			<version>2.0.1</version>
 		</dependency>
 
-
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>2.0.1</version>
-		</dependency>
-
 		<!-- JSON -->
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
 		<dependency>
@@ -240,6 +233,10 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<!-- ====================================================== -->
+				<!-- build paht => library => java버전을 정의해줌               -->
+				<!-- 중요함 꼭 확인해주자 컴파일은 되지만 프로젝트에 빨간불이 뜰ㅍ때가 있음   -->
+				<!-- ====================================================== -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.5.1</version>

@@ -450,14 +450,10 @@ public class UploadController {
 						파일이 존재하지 않는 경우에는 파일을 삭제하지 않고, false를 리턴합니다.
 						(delete()의 경우에는, 파일이 존재하지 않는 경우 NoSuchFileException이 발생했지만,
 						deleteIfExist()의 경우에는 Exception이 발생하지 않습니다.)
-				*/										
 				//Delete
 				Files.deleteIfExists(file);
+				*/										
 
-			
-			*/
-			
-			
 			
 			if("image".equals(type)) {
 				String largeFileName = file.getAbsolutePath().replace("s_", "");
