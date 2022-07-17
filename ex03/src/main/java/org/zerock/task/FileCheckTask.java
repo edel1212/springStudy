@@ -87,13 +87,13 @@ public class FileCheckTask {
 		oldfileList.stream()
 				   .filter((vo)->vo.isFileType())
 				   .map((vo)->Paths.get("C:\\upload"
-			  			   , vo.getUploadPath() + "s_"
+			  			   , vo.getUploadPath() + "\\s_"
 			  			   + vo.getUuid() + "_" + vo.getFileName() ))
 				   .forEach(p->fileListPahts.add(p));
 
 		log.warn("=======================================");
 		
-		fileListPahts.forEach(p->log.warn("Delete File List Up ::: " + p));
+		fileListPahts.forEach(p->log.warn("Base File List Up ::: " + p));
 		
 		//files in yesterday directory
 		File targetDir = Paths.get("C:\\Upload",getFolderYesterDay()).toFile();
