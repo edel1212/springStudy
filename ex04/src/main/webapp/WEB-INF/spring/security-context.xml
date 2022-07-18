@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.7.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- ===============================================
+		spring security는 단독으로 설정 할 수 있기 때문에
+		기존의 root-context나 servlet-context와 는 별도로
+		xml을 새로 만들어서 진행함!
+		
+		1) Namespaces에서 security 항목을 체크
+		2) web.xml에 filter, filter-mapping, context-param 추가
+		3) authentication-manager 추가
+	================================================= -->
+	
+	<security:http>
+		<security:form-login/>
+	</security:http>
+
+	<security:authentication-manager>
+
+	
+	</security:authentication-manager>
+	
+
+</beans>
