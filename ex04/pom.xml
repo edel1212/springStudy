@@ -50,30 +50,47 @@
 		<dependency>
 		    <groupId>org.springframework.security</groupId>
 		    <artifactId>spring-security-web</artifactId>
-		    <version>5.7.2</version>
+		    <version>5.1.5.RELEASE</version>
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-config -->
 		<dependency>
 		    <groupId>org.springframework.security</groupId>
 		    <artifactId>spring-security-config</artifactId>
-		    <version>5.7.2</version>
+		    <version>5.1.5.RELEASE</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
 		<dependency>
 		    <groupId>org.springframework.security</groupId>
 		    <artifactId>spring-security-core</artifactId>
-		    <version>5.7.2</version>
+		    <version>5.1.5.RELEASE</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-taglibs -->
 		<dependency>
 		    <groupId>org.springframework.security</groupId>
 		    <artifactId>spring-security-taglibs</artifactId>
-		    <version>5.7.2</version>
+		    <version>5.1.5.RELEASE</version>
 		</dependency>
 
+		<!-- ============================================================================
+			 메이븐 plug In Error 로 인해 추가
+			 Error Message : chema_reference.4: Failed to read schema document 
+			 'https://maven.apache.org/xsd/maven-4.0.0.xsd', because 1) could not find the document; 2)
+			 the document could not be read; 3) 
+ 			 the root element of the document is not .,
+ 			 
+ 			 ============
+ 			 현재 주석 처리해도 문제가 없음
+ 			 확인 결과 제대로 리소스가 적용되지 않아서 덮어 씌우는 형식으로 된것이었음
+		<dependency>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-resources-plugin</artifactId>
+		    <version>2.4.3</version>
+		</dependency>
+ 			  ============================================================================ -->
+		
 		
 		<!-- Logging -->
 		<dependency>
@@ -124,7 +141,7 @@
 			<artifactId>javax.inject</artifactId>
 			<version>1</version>
 		</dependency>
-				
+		
 		<!-- Servlet -->
 		<dependency>
 			<groupId>javax.servlet</groupId>

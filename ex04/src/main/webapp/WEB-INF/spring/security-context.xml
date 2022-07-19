@@ -2,7 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:security="http://www.springframework.org/schema/security"
-	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.7.xsd
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<!-- ===============================================
@@ -13,6 +13,9 @@
 		1) Namespaces에서 security 항목을 체크
 		2) web.xml에 filter, filter-mapping, context-param 추가
 		3) authentication-manager 추가
+		
+		주의 : xml의 상단 beans의 spring-security-?.xsd
+		      버전을 지워줘야 xml 에러가 안남!
 	================================================= -->
 	
 	<security:http>

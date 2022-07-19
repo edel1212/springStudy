@@ -5,9 +5,12 @@
 		 id="WebApp_Id" version="3.1">
 		 
 	<!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
+	<!-- security-context을 읽을 수 있도록 추가 설정 -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>/WEB-INF/spring/root-context.xml</param-value>
+		<param-value>/WEB-INF/spring/root-context.xml
+    /WEB-INF/spring/security-context.xml
+    </param-value>
 	</context-param>
 	
 	<!-- Creates the Spring Container shared by all Servlets and Filters -->
@@ -52,13 +55,6 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-<!-- TODO : 서버 기동 에러 Bean 등록 안되는중 확인필요 -->
-	<!-- security-context을 읽을 수 있도록 설정 -->
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>/WEB-INF/spring/root-context.xml
-    /WEB-INF/spring/security-context.xml
-    </param-value>
-	</context-param>
+
 
 </web-app>
