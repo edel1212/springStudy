@@ -16,14 +16,56 @@
 		
 		주의 : xml의 상단 beans의 spring-security-?.xsd
 		      버전을 지워줘야 xml 에러가 안남!
+		
+		      
+		************************************************
+		
+		참고 ) 
+		- 아래와 같이 설정하고 /sample/member로 이동할 시
+		  자동으로 접근이 제한되어 login form으로 이동된다
+		  이 페이지와 controller는 구현하지 않았지만 스프링 시큐리티가
+		  기본으로 제공하는 페이지이고 테스트 용도로만 사용된다.      
+		
+		- 스프링 시큐리티에서 명심해야 하는 것 중 하나는 username이나 User
+		  라는 용어의 의미가 일반적인 시스템에서의 의미와 차이가 있다는 것이다.
+		  일반 시스템(userid) -> 스프링 시큐리티(username) 이다
+		            
 	================================================= -->
 	
-	<security:http>
+	<!-- ======================
+			접근 제한 설정
+		
+		pattern : 인터셉터할 URL
+		access  : 접근 시 체크할 권한	
+	====================== -->
+	<security:http >
+	
+		<security:intercept-url pattern="/sample/All" access="permitAll"/>
+		
+		<security:intercept-url pattern="/sample/member" access="hasRole('ROLE_MEMBER')"/>
+		
+		<security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
+		
+		<!-- 정규식을 사용하지 않아서 에러가 난다!!
+		 <security:intercept-url pattern="/sample/blackGom" access="BLACK_GOM"/> 
+		 -->
+	
 		<security:form-login/>
 	</security:http>
 
 	<security:authentication-manager>
-
+	
+		<!-- 인증과 권한에 대한 실제 처리를 하는 UserDetailsServcie -->
+		<security:authentication-provider>
+			<security:user-service>
+				<!-- {noop} : 스프링5부터 패스워드 인코딩 처리가 필수이기 때문에 사용함 -->
+				<security:user name="member" password="{noop}member" authorities="ROLE_MEMBER"/>
+				
+				<security:user name="admin" password="{noop}admin" authorities="ROLE_MEMBER, ROLE_ADMIN"/>
+				
+				<!-- <security:user name="edel1212" password="{noop}gmrrha" authorities="ROLE_MEMBER, ROLE_ADMIN, BLACK_GOM"/> -->
+			</security:user-service>
+		</security:authentication-provider>
 	
 	</security:authentication-manager>
 	
