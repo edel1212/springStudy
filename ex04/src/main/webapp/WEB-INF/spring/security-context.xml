@@ -46,11 +46,29 @@
 		
 		<security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
 		
-		<!-- 정규식을 사용하지 않아서 에러가 난다!!
-		 <security:intercept-url pattern="/sample/blackGom" access="BLACK_GOM"/> 
-		 -->
+		
+		<!--  정규식을 사용하지 않아서 에러가 난다!! 사용하고 싶은 경우 scurity:http 부분에 설정 필요 하지만 권장하지 않음!-->
+		<!--  <security:intercept-url pattern="/sample/blackGom" access="BLACK_GOM"/> --> 
+		 
 	
+		<!-- Spring security 에서 지원하는 login form -->
 		<security:form-login/>
+		
+		
+		<!-- *************************************	
+		    - 접근 거부 시 이동될 페이지 지정 Controller도 
+			  구현해 줘야한다 @See : CommonController
+			  
+			- 접근 제한이 된 경우 다양한 처리를 하고싶다면 직접
+			  AccessDeniedHandler 인터페이스를 구현하는 편이
+			  더 좋다. 
+			  * 예를 들어 접근이 제한 되었을 때 쿠키나
+			    세션에 특정한 작업을 하거나 HttpServletResponse에
+			    특정한 헤더 정보를 추가하는 등으 행위를 할수 있다.
+		 ************************************* --> 
+		<security:access-denied-handler error-page="/accessError" />  <!-- 기본 URL 설정 방식 -->
+			
+		<!-- @TODO : AccessDeniedHandler 구현 후 빈 주입 추가 사용하기 -->	
 	</security:http>
 
 	<security:authentication-manager>
