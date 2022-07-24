@@ -4,6 +4,10 @@
 	xmlns:security="http://www.springframework.org/schema/security"
 	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- CustomAccessDeniedHandler 빈 주입  -->
+	<bean id="customAccessDenied" class="org.zerock.security.CustomAccessDeniedHandler"/>
+	
 
 	<!-- ===============================================
 		spring security는 단독으로 설정 할 수 있기 때문에
@@ -52,7 +56,12 @@
 		 
 	
 		<!-- Spring security 에서 지원하는 login form -->
-		<security:form-login/>
+		<!-- <security:form-login/> -->
+		<!-- *************************************
+			내가 커스텀하여 만듬 loginForm 
+			@See : CommonController
+		 ************************************* -->
+		<security:form-login login-page="/customLogin"/>
 		
 		
 		<!-- *************************************	
@@ -66,9 +75,23 @@
 			    세션에 특정한 작업을 하거나 HttpServletResponse에
 			    특정한 헤더 정보를 추가하는 등으 행위를 할수 있다.
 		 ************************************* --> 
-		<security:access-denied-handler error-page="/accessError" />  <!-- 기본 URL 설정 방식 -->
+		 <!-- 기본 URL 설정 방식 다양한 설정을 하지못해 권장 ❌❌ -->
+		<!-- <security:access-denied-handler error-page="/accessError" /> -->  
 			
-		<!-- @TODO : AccessDeniedHandler 구현 후 빈 주입 추가 사용하기 -->	
+			
+			
+		<!-- *************************************	
+			위와 같은 경우는 문제가 발생했일 시에 만 넘어가는
+			형식이고 좀 더 다양하게 처리하고 싶다면 
+			AccessDeniedHandler를 구현하는 것이 좋다
+			
+			* 예를 들면 접근 제한이 되었을 때 쿠키나 세션에 특정한
+			작업을 하거나 HttpServlertResponse에 
+			특정한 해더 정보를 추가하는 등  행위가 가능하다
+		 ************************************* -->
+		 <!-- CustomAccessDeniedHandler를 빈으로 만든걸 주입 @See: 9Line --> 
+		<security:access-denied-handler ref="customAccessDenied"/>
+		
 	</security:http>
 
 	<security:authentication-manager>
