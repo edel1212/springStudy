@@ -8,7 +8,10 @@
 	<!-- CustomAccessDeniedHandler 빈 주입  -->
 	<bean id="customAccessDenied" class="org.zerock.security.CustomAccessDeniedHandler"/>
 	
-
+	<!-- CustomLoginSuccessHandler 빈 주입  -->
+	<bean id="customloginSuccess" class="org.zerock.security.CustomLoginSuccessHandler"/>
+	
+<!-- @TODO : 로그아웃 및 successHandler 테스트 -->
 	<!-- ===============================================
 		spring security는 단독으로 설정 할 수 있기 때문에
 		기존의 root-context나 servlet-context와 는 별도로
@@ -36,34 +39,48 @@
 		            
 	================================================= -->
 	
-	<!-- ======================
-			접근 제한 설정
-		
-		pattern : 인터셉터할 URL
-		access  : 접근 시 체크할 권한	
-	====================== -->
-	<security:http >
 	
+	<security:http >
+		
+		<!-- ==============================================
+				- 접근 제한 설정 -
+				pattern : 인터셉터할 URL
+				access  : 접근 시 체크할 권한	
+			============================================== -->
 		<security:intercept-url pattern="/sample/All" access="permitAll"/>
-		
 		<security:intercept-url pattern="/sample/member" access="hasRole('ROLE_MEMBER')"/>
-		
 		<security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
-		
-		
 		<!--  정규식을 사용하지 않아서 에러가 난다!! 사용하고 싶은 경우 scurity:http 부분에 설정 필요 하지만 권장하지 않음!-->
 		<!--  <security:intercept-url pattern="/sample/blackGom" access="BLACK_GOM"/> --> 
 		 
 	
-		<!-- Spring security 에서 지원하는 login form -->
+	
+		<!-- ==============================================
+				- 로그인 form 및 성공 설정 -
+			============================================== -->
+		<!-- Spring security 에서 지원하는 기본 지원 loginform -->
 		<!-- <security:form-login/> -->
+		
 		<!-- *************************************
-			내가 커스텀하여 만듬 loginForm 
-			@See : CommonController
+			1) 커스텀 로그인 form 과 성공 시 처리하는 Class 연결
+			   CustomLoginSuccessHandler.java를 주입하여 사용함
+			   @See :  CommonController
+			    	 , CustomLoginSuccessHandler
+			      
+			2) form-login 설정 할 수 있는것들  
+			   - username-parameter="loginId" 	//아이디 입력 input 태그의 name 속성값
+			   - password-parameter="loginPwd" 	//비밀번호 입력 input 태그의 name 속성값
+			   - login-processing-url="/login" 	//form 태그의 action 속상값
+			   - login-page="/secu/loginPage" 	//로그인 페이지의 URL
+			   - default-target-url="/"  		//로그인 성공 시 가게 될 페이지    
 		 ************************************* -->
-		<security:form-login login-page="/customLogin"/>
+		<security:form-login login-page="/customLogin" authentication-success-handler-ref="customloginSuccess"/>
 		
 		
+		
+		<!-- ==============================================
+				- 로그인 실패 시 설정 -
+			============================================== -->
 		<!-- *************************************	
 		    - 접근 거부 시 이동될 페이지 지정 Controller도 
 			  구현해 줘야한다 @See : CommonController
@@ -78,8 +95,6 @@
 		 <!-- 기본 URL 설정 방식 다양한 설정을 하지못해 권장 ❌❌ -->
 		<!-- <security:access-denied-handler error-page="/accessError" /> -->  
 			
-			
-			
 		<!-- *************************************	
 			위와 같은 경우는 문제가 발생했일 시에 만 넘어가는
 			형식이고 좀 더 다양하게 처리하고 싶다면 
@@ -92,6 +107,12 @@
 		 <!-- CustomAccessDeniedHandler를 빈으로 만든걸 주입 @See: 9Line --> 
 		<security:access-denied-handler ref="customAccessDenied"/>
 		
+		
+		<!--*************************************	
+	 	CSRF 토근 생성을 활성화 세션에서 값을 가지고 있다가
+	 	브라우저에서 전송된 토근값을 검사하는 방식
+		<security:csrf disabled="true"/>
+	*************************************	 -->
 	</security:http>
 
 	<security:authentication-manager>
@@ -109,6 +130,8 @@
 		</security:authentication-provider>
 	
 	</security:authentication-manager>
+	
+	
 	
 
 </beans>

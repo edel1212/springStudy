@@ -57,5 +57,11 @@ public class CommonController {
 		}
 		
 	}
+
+	public void logoutPost() {
+		//TODO ...CODE~~
+	}
 	
+	
+	//__Eof__
 }
