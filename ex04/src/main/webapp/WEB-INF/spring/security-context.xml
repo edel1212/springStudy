@@ -44,9 +44,8 @@
 		
 		<!-- ==============================================
 				- 접근 제한 설정 -
-				pattern : 인터셉터할 URL
-				access  : 접근 시 체크할 권한	
 			============================================== -->
+		<!-- pattern : 인터셉터할 URL // access  : 접근 시 체크할 권한	 -->	
 		<security:intercept-url pattern="/sample/All" access="permitAll"/>
 		<security:intercept-url pattern="/sample/member" access="hasRole('ROLE_MEMBER')"/>
 		<security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
@@ -108,10 +107,18 @@
 		<security:access-denied-handler ref="customAccessDenied"/>
 		
 		
+		<!-- ==============================================
+				- 로그아웃 설정 -
+			============================================== -->
+		<!-- invalidate-session="true" 세션을 초기화 하는것 -->
+		<!-- logout-success-url="/" 를 사용해서 성공 시 이동할 ULR 설정 가능 -->
+		<security:logout logout-url="/logout" logout-success-url="/" invalidate-session="true" />
+		
 		<!--*************************************	
 	 	CSRF 토근 생성을 활성화 세션에서 값을 가지고 있다가
 	 	브라우저에서 전송된 토근값을 검사하는 방식
-		<security:csrf disabled="true"/>
+	 	만약 서버에 요청 데이터를 요청 시 없으면
+	 	AccessDeniedHandler를 타게된다!
 	*************************************	 -->
 	</security:http>
 
