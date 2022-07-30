@@ -123,19 +123,17 @@
 	</security:http>
 
 	<security:authentication-manager>
-	
 		<!-- 인증과 권한에 대한 실제 처리를 하는 UserDetailsServcie -->
 		<security:authentication-provider>
+			
 			<security:user-service>
-				<!-- {noop} : 스프링5부터 패스워드 인코딩 처리가 필수이기 때문에 사용함 -->
+				<!-- {noop}이란? : 스프링5부터 패스워드 PasswordEncoder(인코딩) 처리가 필수이기 때문에 사용함 -->
 				<security:user name="member" password="{noop}member" authorities="ROLE_MEMBER"/>
-				
 				<security:user name="admin" password="{noop}admin" authorities="ROLE_MEMBER, ROLE_ADMIN"/>
-				
 				<!-- <security:user name="edel1212" password="{noop}gmrrha" authorities="ROLE_MEMBER, ROLE_ADMIN, BLACK_GOM"/> -->
 			</security:user-service>
+			
 		</security:authentication-provider>
-	
 	</security:authentication-manager>
 	
 	
