@@ -11,6 +11,9 @@
 		<!-- CustomLoginSuccessHandler 빈 주입  -->
 		<bean id="customloginSuccess" class="org.zerock.security.CustomLoginSuccessHandler"/>
 		
+		<!-- BCryptPasswordEncoder 빈 주입  -->
+		<bean id="bcryptPasswordEncoder"
+          class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 		
 		<security:http>
 		<!-- URL별 권한 -->
@@ -33,7 +36,7 @@
 			<security:authentication-provider>
 				<!-- ***************************************  -->
 				<!-- @Descripton : security:password-encoder에서 사용된
-				           		    BCyptPasswordEncoder는 스프링 시큐리티에서
+				           		    BCryptPasswordEncoder는 스프링 시큐리티에서
 				           		    제공되는 클래스이다 그래서 따로 만들어줄 필요가 없디
 								   
 								   ✅ 해당 클래스를 이용해서 패스워드를 암호화 하여 처리하록 설정한다
@@ -41,10 +44,19 @@
 								      원문으로 되돌리지 못하는 단방향 암호화 방법이다
 								      -->
 				<!-- ***************************************  -->
-				<!-- DB를 이용한 로그인 -->
-				<security:jdbc-user-service data-source-ref="dataSource"/>
-				<!-- security에서 제공하는 클래스를 불러서  암호화 사용 -->
-				<security:password-encoder ref="bcyptPasswordEncoder"/>
+				<!-- DB를 이용한 로그인 :: dataSources는 root-context에서 bean 주입함 -->
+				<!-- <security:jdbc-user-service data-source-ref="dataSource"/> -->
+				
+				<!-- DB를 이용한 로그인[ 내가 만든 table 사용 ]
+					 ✅ users-by-username-query :: 계정정보
+					 ✅ authorities-by-username-query :: 권한 
+				  -->
+				<security:jdbc-user-service data-source-ref="dataSource" 
+					users-by-username-query="SELECT userid, userpw, enabled FROM tbl_member WHERE userid = ?"
+					authorities-by-username-query="SELECT userid, auth FROM tbl_member_auth WHERE userid = ?" />
+				
+				<!-- security에서 제공하는 클래스를 불러서 빈으로 만든 후 암호화에 사용 -->
+				<security:password-encoder ref="bcryptPasswordEncoder"/>
 			</security:authentication-provider>
 		</security:authentication-manager>
 		
