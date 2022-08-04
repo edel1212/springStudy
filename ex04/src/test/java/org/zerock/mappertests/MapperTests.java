@@ -7,6 +7,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.zerock.domain.MemberVO;
 import org.zerock.mapper.MemberMapper;
+import org.zerock.mapper.TimeMapper;
 
 import lombok.extern.log4j.Log4j;
 
@@ -17,13 +18,20 @@ public class MapperTests {
 
 	@Autowired
 	private MemberMapper mapper;
+	@Autowired
+	private TimeMapper timeMapper;
+	
+	@Test
+	public void test() {
+		timeMapper.getTime();
+	}
 	
 	@Test
 	public void memberTest() {
-		MemberVO vo = mapper.getMemberInfo("adming90");
+		MemberVO vo = mapper.getMemberInfo("admin90");
 		log.info(vo);
 		
-		vo.getAuthList().forEach(System.out::println);
+		//vo.getAuthList().forEach(System.out::println);
 	}
 	
 }
