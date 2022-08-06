@@ -1,5 +1,6 @@
 package org.zerock.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,5 +62,30 @@ public class SampleController {
 	@GetMapping("/blackGome")
 	public void doGom() {
 		log.info("yoo only");
+	}
+	
+	
+	/** = = = = = = = = = = = = = = = = =  = = = = = = = = */
+	/**
+	 * @Description : 매번 security 설정의 <security:http>에 URL을 등록하는것은
+	 *                굉장히 번거러운 일이기에 어노테이션을 이용해서 설정하여 사용이 가능하다
+	 *                
+	 *                ✅ 단 주의해야할 것은 해당 어노테이션을 사용하라면 security를 설정한 xml이 아닌
+	 *                   <b>
+	 *                   	servlet-context.xml의 namespace에 security를 체크해줘야한다는 것이다!
+	 *                   	 - 그 후 <security:global-method-security/ >설정을 해주면된다
+	 *                         @see : servlet-context.xml 
+	 *                   </b> ㄴ
+	 * */
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MEMBER')")
+	@GetMapping("/annoMember")
+	public void doAnnoMember() {
+		log.info("Logined Annotation member!");
+	}
+	
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+	@GetMapping("/annoAdmin")
+	public void doAnnoAdmin() {
+		log.info("Logined annotation Admin!");
 	}
 }

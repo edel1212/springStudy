@@ -15,6 +15,9 @@
 		<bean id="bcryptPasswordEncoder"
           class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 		
+		<!-- CustomUserDetailsService 빈 주입  -->
+		<bean id="customUserDetailsService"  class="org.zerock.security.CustomUserDetailsService"/>
+		
 		<security:http>
 		<!-- URL별 권한 -->
 			<security:intercept-url pattern="/sample/All" access="permitAll"/>
@@ -29,32 +32,34 @@
 			
 			<!-- 로그아웃 시 핸들러 -->
 			<security:logout logout-url="/logout" logout-success-url="/" invalidate-session="true" />
+			
+			<!--
+				자동로그인 설정 :: 커스텀하여 사용할 것이 아니라면 시큐르티 구조에 맞는 table이 생성되어 있어야함 
+				               ex) CREATE TABLE persistent_logins (
+									username VARCHAR(64) NOT NULL
+									, series VARCHAR(64) PRIMARY KEY
+									, token VARCHAR(64) NOT null
+									, last_used TIMESTAMP NOT null
+								)
+									
+				✅ @see: customLogin.jsp 에서 확인해보면 checkbox[name='rememeber-me']를 사용하여
+				   확인 유무를 전달하는것으 확인 할 수 있다.					
+			-->
+			<security:remember-me data-source-ref="dataSource" token-validity-seconds="604800"/>
+			
+			<!-- 로그아웃 시 쿠키삭제 -->
+			<security:logout logout-url="/logout" logout-success-url="/" invalidate-session="true"
+				delete-cookies="remember-me,JSESSION_ID" /> <!-- JSESSION_ID는 톰겟에서 발행한 쿠키의 이름이다 -->
 		</security:http>	
 		
 		<!-- 인증과 권한 처리 -->
 		<security:authentication-manager>
-			<security:authentication-provider>
-				<!-- ***************************************  -->
-				<!-- @Descripton : security:password-encoder에서 사용된
-				           		    BCryptPasswordEncoder는 스프링 시큐리티에서
-				           		    제공되는 클래스이다 그래서 따로 만들어줄 필요가 없디
-								   
-								   ✅ 해당 클래스를 이용해서 패스워드를 암호화 하여 처리하록 설정한다
-								      체크하는 쪽에서는 암호화된 패스워드가 가능한 패스워드인지만 확인하고 다시 
-								      원문으로 되돌리지 못하는 단방향 암호화 방법이다
-								      -->
-				<!-- ***************************************  -->
-				<!-- DB를 이용한 로그인 :: dataSources는 root-context에서 bean 주입함 -->
-				<!-- <security:jdbc-user-service data-source-ref="dataSource"/> -->
-				
-				<!-- DB를 이용한 로그인[ 내가 만든 table 사용 ]
-					 ✅ users-by-username-query :: 계정정보
-					 ✅ authorities-by-username-query :: 권한 
-				  -->
-				<security:jdbc-user-service data-source-ref="dataSource" 
-					users-by-username-query="SELECT userid, userpw, enabled FROM tbl_member WHERE userid = ?"
-					authorities-by-username-query="SELECT userid, auth FROM tbl_member_auth WHERE userid = ?" />
-				
+			<!-- UserDetailsService를 이용한 로그인처리 
+					 ✅ 상단에 bean으로 주입해준 CustomUserDetailsService를 사용
+					    해당 빈은 UserDetailsService구현한 구현체이며
+					    로그인 시 Custom 한 service 로직을 사용함
+					    @see : CustomUserDetailsService.java -->		
+			<security:authentication-provider user-service-ref="customUserDetailsService">
 				<!-- security에서 제공하는 클래스를 불러서 빈으로 만든 후 암호화에 사용 -->
 				<security:password-encoder ref="bcryptPasswordEncoder"/>
 			</security:authentication-provider>

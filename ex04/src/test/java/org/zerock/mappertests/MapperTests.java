@@ -30,8 +30,7 @@ public class MapperTests {
 	public void memberTest() {
 		MemberVO vo = mapper.getMemberInfo("admin90");
 		log.info(vo);
-		
-		//vo.getAuthList().forEach(System.out::println);
+		vo.getAuthList().forEach(System.out::println);
 	}
 	
 }
