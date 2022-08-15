@@ -1,13 +1,23 @@
-# Spring 초기 설정
-JDBC, DI test and default   setting
+<h1> 정리 내용 </h1>
 
-1) 의존성 주입
-  *controller의 경우 service를 사용할 경우
- - ex) 방법1. @AllArgsConstructor 를 사용하면 @Autowired, @Setter,@Resource를 사용하지 않아도 된다.
-       방법2. @Autowired를 사용한다 자동으로 주입된다 [사용할 경우 반드시 기본 생성자가 정의되어 있어야 한다.]
-       방법3. @Setter(onMethod = @Autowired) [사용할 경우 반드시 기본 생성자가 정의되어 있어야 한다.]
-	   방법4. @Resource는 주입하려고 하는 객체의 이름(id)이 일치하는 객체를 자동으로 주입한다. 
-	         [메이븐 주입필요 javax.annotation-api] @Resource(name ="") 이런 식으로 사용도 가능
+- Bean 추가 및 사용방법
+- Controller, RESTController 차이
+- MVC 흐름
+- JUnit 테스트
+- Mybatis 사용법
+
+<hr/>
+
+<h3>1) 의존성 주입</h3>
+<p><b>✔Controller, Service를 사용할 경우</b></p>
+<p> 기본 전제 조건 : Bean에 주입되어 있어야한다 <b>root-context.xml</b> </p>
+<strong> ex) </strong> 
+
+>* 방법1. @AllArgsConstructor 를 사용하면 @Autowired, @Setter,@Resource를 사용하지 않아도 된다.
+>* 방법2. @Autowired를 사용한다 자동으로 주입된다 [사용할 경우 반드시 기본 생성자가 정의되어 있어야 한다.]
+>* 방법3. @Setter(onMethod = @Autowired) [사용할 경우 반드시 기본 생성자가 정의되어 있어야 한다.]
+>* 방법4. @Resource는 주입하려고 하는 객체의 이름(id)이 일치하는 객체를 자동으로 주입한다. 
+>            [메이븐 주입필요 javax.annotation-api] @Resource(name ="") 이런 식으로 사용도 가능
 
 
 2) 기본적인 Controller 사용 
