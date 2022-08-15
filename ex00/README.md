@@ -25,7 +25,10 @@
 
 <h3>2) 기본적인 Controller 사용 </h3>
 <p><b>✔BoardController.java </b></p>
+
   Click [here](https://github.com/edel1212/springStudy/blob/main/ex00/src/main/java/org/zerock/controller/BoardController.java)
+  
+  Click [here](naver.com)
   
 <hr style="margin:25px 0 25px 0"/>
 
