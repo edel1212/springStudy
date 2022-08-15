@@ -6,24 +6,29 @@
 - JUnit 테스트
 - Mybatis 사용법
 
-<hr/>
+<hr style="margin:25px 0 25px 0"/>
 
 <h3>1) 의존성 주입</h3>
 <p><b>✔Controller, Service를 사용할 경우</b></p>
 <p> 기본 전제 조건 : Bean에 주입되어 있어야한다 <b>root-context.xml</b> </p>
 <strong> ex) </strong> 
 
->* 방법1. @AllArgsConstructor 를 사용하면 @Autowired, @Setter,@Resource를 사용하지 않아도 된다.
->* 방법2. @Autowired를 사용한다 자동으로 주입된다 [사용할 경우 반드시 기본 생성자가 정의되어 있어야 한다.]
->* 방법3. @Setter(onMethod = @Autowired) [사용할 경우 반드시 기본 생성자가 정의되어 있어야 한다.]
->* 방법4. @Resource는 주입하려고 하는 객체의 이름(id)이 일치하는 객체를 자동으로 주입한다. 
->            [메이븐 주입필요 javax.annotation-api] @Resource(name ="") 이런 식으로 사용도 가능
+>* 1 )  @AllArgsConstructor 를 사용하면 @Autowired,@Resource를 사용하지 않아도 된다.
+>* 2 ) @Autowired를 사용 자동으로 주입된다 
+>* 3 ) @Setter(onMethod = @Autowired) [사용할 경우 반드시 기본 생성자가 정의되어 있어야 한다.]
+>* 4 ) @Resource(name="??")는 객체의 이름(id)이 일치하는 ServiceImpl을 자동으로 주입한다. 
+>   <p> 사용시 : [메이븐 javax.annotation-api 추가 필요] </p>
 
 
-2) 기본적인 Controller 사용 
-  * @See BoardController.java
+<hr style="margin:25px 0 25px 0"/>
+
+
+<h3>2) 기본적인 Controller 사용 </h3>
+<p><b>✔BoardController.java </b></p>
+  Click [See](https://github.com/edel1212/springStudy/blob/main/ex00/src/main/java/org/zerock/controller/BoardController.java)
   
-  
+<hr style="margin:25px 0 25px 0"/>
+
 3) RESTController 사용
   * @See : FetchController 확인
   
