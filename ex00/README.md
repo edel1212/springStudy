@@ -17,7 +17,9 @@
 > - 2 ) @Autowired를 사용 자동으로 주입된다
 > - 3 ) @Setter(onMethod = @Autowired) [사용할 경우 반드시 기본 생성자가 정의되어 있어야 한다.]
 > - 4 ) @Resource(name="??")는 객체의 이름(id)이 일치하는 ServiceImpl을 자동으로 주입한다.
-> <p> 사용시 : [메이븐 javax.annotation-api 추가 필요] </p>
+>   사용시 : [메이븐 javax.annotation-api 추가 필요]
+>
+> ---
 
 <hr style="margin:25px 0 25px 0"/>
 
@@ -44,10 +46,11 @@
 > - 기억해 둘것 context:component-scan은 Namespaces에서 context를 체크해 줘야한다
 > - mybatis-spring:scan 은 Namespaces에서 mybatis를 체크해줘야한다 **componet와 헷갈리지 말자**
 > - jdbc 및 conectionPool , log4j 설정은 **_하위 링크를 확인_**
-
-> @See : [root-context.xml](https://github.com/edel1212/springStudy/blob/main/ex00/src/main/webapp/WEB-INF/spring/root-context.xml)
-> , [log4j.xml](https://github.com/edel1212/springStudy/blob/main/ex00/src/main/resources/log4j.xml)
-> , [log4jdbc.log4j2.properties](https://github.com/edel1212/springStudy/blob/main/ex00/src/main/resources/log4jdbc.log4j2.properties)
+>   > @See : [root-context.xml](https://github.com/edel1212/springStudy/blob/main/ex00/src/main/webapp/WEB-INF/spring/root-context.xml)
+>   > , [log4j.xml](https://github.com/edel1212/springStudy/blob/main/ex00/src/main/resources/log4j.xml)
+>   > , [log4jdbc.log4j2.properties](https://github.com/edel1212/springStudy/blob/main/ex00/src/main/resources/log4jdbc.log4j2.properties)
+>
+> ---
 
 <hr style="margin:25px 0 25px 0"/>
 <h3>6) Mapper.xml을 만들지 않고도 쿼리 사용이 가능함.</h3>
@@ -55,8 +58,9 @@
   ex)
 
 > - @Select("SELECT \* FROM tbl_board") 어노테이션 활용
-
-> @See : [BoardMapper.java](https://github.com/edel1212/springStudy/blob/main/ex00/src/main/java/org/zerock/mapper/BoardMapper.java)
+>   > @See : [BoardMapper.java](https://github.com/edel1212/springStudy/blob/main/ex00/src/main/java/org/zerock/mapper/BoardMapper.java)
+>   >
+>   > ***
 
 <hr style="margin:25px 0 25px 0"/>
 
@@ -64,14 +68,15 @@
 
 > - xml의 상단 xml이 myBatis를 사용할것이라는 선은을 해줘야함
 
+```xml
 ex)
-
-> \<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-
-    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+```
 
 > - mapper namespace="org.zerock.mapper.BoardMapper" 와 같이 네임스페이스와 SqlId를 맞춰줘야한다.
 > - ..../main//java/mapper/interface파일 경로와 src/main/resources/....xml 파일의 경로와 파일명은 같게 끔 해주자! **_✔dir 경로와 namespace를 꼭 확인해주자!!✔_**
+>
+> ---
 
 <hr style="margin:25px 0 25px 0"/>
 
@@ -81,6 +86,8 @@ ex)
 >   => Libaries => add Libary... => JUnit4 추가 해주자
 > - src/test/java 하위 파일 확인하지
 > - SQL과 연결되어있을경우 log4j.xml, log4jdbcpropertice 파일도 따로 변경 및 추가 필요
+>
+> ---
 
 필요 메이븐 목록
 
@@ -92,14 +99,15 @@ ex)
 > - mybatis
 > - mybatis-spring
 > - spring-test [이게 없으면 springRun class 가 안잡힘]
+>
+> ---
 
 <hr style="margin:25px 0 25px 0"/>
 
 <h3>9) JDBC 사용 시 메이븐 설정</h3>
 
 > - 해당DB jdbc , connectionPool[히카리 사용], mybatis, mybatis-spring ,spring-jdbc , org.bgee.log4jdbc-log4j2
-> - 또 하나 중요한건 pom 하단 maven-compiler-plugin 버전을 내가 상단 사용하는 java 버전와 맞춰주자!!!
-
-이유는 하단 링크 최하단 주석 확인
-
-@See : [pom.xml](https://github.com/edel1212/springStudy/blob/main/ex00/pom.xml)
+> - 또 하나 중요한건 pom 하단 maven-compiler-plugin 버전을 내가 상단 사용하는 java 버전와 맞춰야함!!!
+> - 이유는 링크 확인 @See : [pom.xml](https://github.com/edel1212/springStudy/blob/main/ex00/pom.xml)
+>
+> ---

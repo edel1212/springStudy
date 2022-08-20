@@ -3,6 +3,8 @@
 <h3>1 . AOP 설정 요약</h3>
 
 > - 1 ) aspectJ 와 aspectJ weaver를 pom에 추가해준다.
+>
+> ---
 
 ```xml
 <!-- AspectJ -->
@@ -35,6 +37,8 @@
 > - 4 ) component:scan을 사용해서 aop 적용할 패키지명을 bean에 주입해주자.
 > - 5 ) 다음 적용한 package에 java파일을만들어 사용하자 @See:
 >   > @See : [LogAdvice.java](https://github.com/edel1212/springStudy/blob/main/ex02/src/main/java/org/zerock/aop/LogAdvice.java)
+>
+> ---
 
 <hr style="margin:25px 0 25px 0"/>
 
@@ -48,3 +52,5 @@
 >   > @See : [SampleTxServiceImpl.java](https://github.com/edel1212/springStudy/blob/main/ex02/src/main/java/org/zerock/service/SampleTxServiceImpl.java)
 >   >
 >   > > ✅@Transactional을 달아줘서 설정함!✅
+>
+> ---
