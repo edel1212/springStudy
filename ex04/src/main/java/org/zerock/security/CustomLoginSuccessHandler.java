@@ -24,7 +24,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler{@
 			Authentication authentication) throws IOException, ServletException {
 
 		log.warn("Login Success");
-		
+		log.info("누가 먼저니??? ::: CustomLoginSuccessHandler");
 		List<String> roleNames = new ArrayList<>();
 		
 		//권한 확인 한가지 종류의  권한이 아닐수 있으므로 배열로 들어옴
