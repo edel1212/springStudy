@@ -14,6 +14,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import lombok.extern.log4j.Log4j;
 
+/**
+ * @Description : JDBC 테스트와 다른 점은 DataSource Test는 내가 
+ *                root-context.xml 에 설정한 파일을 읽어서 DataSource를
+ *                테스트 한다는 점이다! 따라서 @RunWith 와 @ContextConfiguration 이 필요한것이다!
+ * **/
 @RunWith(SpringJUnit4ClassRunner.class) //테스트시 필요한 클래스를 지정, pom의 spring-test가 추가되어있어야 한다!
 @ContextConfiguration("file:src/main/webapp/WEB-INF/spring/root-context.xml")//어떤 설정 정보를 읽어 들여야 하는지를 명시한다
 @Log4j
@@ -34,6 +39,12 @@ public class DataSourceTests {
 	@Test
 	public void testConnection() {
 		try {
+			/**
+			 * @Description :  JDBC에서는  con 변수를 만들때
+			 * 					DriverManager.getConnection(..code..);
+			 * 					를 사용했지만 해당 방법은 root-context에 서 주입된
+			 * 					dataSource를 의존성 주입을 통해 불러 사용!
+			 * */
 			Connection con = dataSource.getConnection();
 			log.info(con);
 		} catch (Exception e) {
@@ -41,6 +52,7 @@ public class DataSourceTests {
 		}
 	}
 	
+	//Mybatis Test!
 	@Test
 	public void testMybatis() {
 		try {

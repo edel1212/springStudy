@@ -11,6 +11,11 @@ import org.zerock.mapper.TimeMapper;
 
 import lombok.extern.log4j.Log4j;
 
+/**
+ * ✅ 잊지말아야 하는것은 내가 읽으려는 interface를 꼭 
+ *    !!! 🎈 batis-spring:scan 스캔으로 빈등록을 해줘야한다는 것이다!!
+ *    !!! 👿 context:component-scan 아님!!👿
+ *     * **/
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("file:src/main/webapp/WEB-INF/spring/root-context.xml")
 @Log4j

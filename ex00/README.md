@@ -89,6 +89,11 @@ ex)
 >
 > ---
 
+테스트 예제
+
+> - [JDBCTests.java]("https://github.com/edel1212/springStudy/blob/main/ex00/src/test/java/org/zerock/persistence/JDBCTests.java") - JDBC 연결 테스트
+> - [DataSourceTests.java]("https://github.com/edel1212/springStudy/blob/main/ex00/src/test/java/org/zerock/persistence/DataSourceTests.java") - Root-context에서 설정한 DataSource 테스트
+
 필요 메이븐 목록
 
 > - spring-jdbc
