@@ -99,7 +99,6 @@ ex)
 > - spring-jdbc
 > - 사용 DB-jdbc
 > - 커넥션풀을 사용할경우 추가
-> - log4j-api
 > - log4jdbc-log4j2-jdbc4
 > - mybatis
 > - mybatis-spring
@@ -114,5 +113,13 @@ ex)
 > - 해당DB jdbc , connectionPool[히카리 사용], mybatis, mybatis-spring ,spring-jdbc , org.bgee.log4jdbc-log4j2
 > - 또 하나 중요한건 pom 하단 maven-compiler-plugin 버전을 내가 상단 사용하는 java 버전와 맞춰야함!!!
 > - 이유는 링크 확인 @See : [pom.xml](https://github.com/edel1212/springStudy/blob/main/ex00/pom.xml)
+>
+> - =============================================================================
+>
+>   **Query를 사용할 경우 쿼리와 결과값을 보기위한 설정**
+>
+> - 1 . 메이븐에 log4jdbc-log4j2-jdbc4 설정
+> - 2 . root-context.xml에 JDBC 설정 변경
+>   > @See : [root-context.xml](https://github.com/edel1212/springStudy/blob/main/ex00/src/main/webapp/WEB-INF/spring/root-context.xml)
 >
 > ---

@@ -14,9 +14,20 @@
 		<!-- log4jdbc-log4j2 사용으로 인한 주석 
 		<property name="driverClassName" value="org.mariadb.jdbc.Driver"/>
 		<property name="jdbcUrl" value="jdbc:mariadb://localhost:3310/jsp_practice"/> 
-		-->                                      
+		-->
+		
+		<!-- *************************************************************************************** -->
+		<!-- 
+			@Description : 상단 13 ~ 14 Line은 기본 JDBC를 사용 한 것이고
+						   하위 25 ~ 26 Line은 실행하는 쿼리문 과 결과값을 보기위한
+						   log4j를 적용한 방법이다
+						   
+						   ✅메이븐에 log4jdbc-log4j2-jdbc4를 추가하여 사용해주자!
+						   		 																	-->
+		<!-- *************************************************************************************** -->
 		<property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy"></property>
 		<property name="jdbcUrl" value="jdbc:log4jdbc:mariadb://localhost:3310/yoodb"></property>
+		
 		<property name="username" value="root"/>
 		<property name="password" value="123"/>
 	</bean>

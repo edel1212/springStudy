@@ -28,4 +28,5 @@ public class MapperTest {
 		log.info(timeMapper.getTime2());
 	}
 	
+	//TODO : 이어서작업할것 dir 경로 다르게 , namesapce 다르게 ,log4j 다르게, test에는 log4 없으면 안돼?
 }

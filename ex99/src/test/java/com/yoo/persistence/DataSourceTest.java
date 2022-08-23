@@ -34,7 +34,6 @@ public class DataSourceTest {
 		}
 	}
 	
-	//TODO : 확인필요 2022-08-22
 	//Mybatis Test!
 		@Test
 		public void testMybatis() {
