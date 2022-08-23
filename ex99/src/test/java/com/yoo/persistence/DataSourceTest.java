@@ -1,4 +1,4 @@
-package org.zerock.persistence;
+package com.yoo.persistence;
 
 import java.sql.Connection;
 
@@ -21,7 +21,7 @@ public class DataSourceTest {
 	
 	@Autowired
 	private DataSource dataSource;
-	
+	@Autowired
 	private SqlSessionFactory sqlSessionFactory;
 	
 	@Test

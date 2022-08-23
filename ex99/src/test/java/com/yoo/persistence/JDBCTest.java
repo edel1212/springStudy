@@ -1,4 +1,4 @@
-package org.zerock.persistence;
+package com.yoo.persistence;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
