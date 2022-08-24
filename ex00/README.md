@@ -64,9 +64,9 @@
 
 <hr style="margin:25px 0 25px 0"/>
 
-<h3>7) MapperInterface => Mapper.xml 읽는 연결 방법 및 주의사항</h3>
+<h3>7) Mapper_Interface => Mapper.xml 읽는 연결 방법 및 주의사항</h3>
 
-> - xml의 상단 xml이 myBatis를 사용할것이라는 선은을 해줘야함
+> - xml의 상단 xml이 myBatis를 사용할것이라는 선언을 해줘야함
 
 ```xml
 ex)
@@ -74,7 +74,10 @@ ex)
 ```
 
 > - mapper namespace="org.zerock.mapper.BoardMapper" 와 같이 네임스페이스와 SqlId를 맞춰줘야한다.
-> - ..../main//java/mapper/interface파일 경로와 src/main/resources/....xml 파일의 경로와 파일명은 같게 끔 해주자! **_✔dir 경로와 namespace를 꼭 확인해주자!!✔_**
+> - ..../main//java/mapper/interface파일 경로와 src/main/resources/....xml
+>   > ✅ **파일의 경로와 파일명은 같게** 끔 해주자! **_ ✔ 또한 namespace도 꼭 확인해주자!!✔_**
+>   >
+>   > 해당 설정을 바꾸고 싶다면 MyBatis Mapper 파일 설정을 변경해주면 된다 [링크]("https://bigfat.tistory.com/98")
 >
 > ---
 
@@ -82,10 +85,10 @@ ex)
 
 <h3>8) Junit Test 방법</h3>
 
-> - **_✔ 중요 ::_** 프로젝트 우 클릭 => properties => Java Build Path
+> - **✔ 중요 :** JUnit이 없을 경우 => 프로젝트 우 클릭 => properties => Java Build Path
 >   => Libaries => add Libary... => JUnit4 추가 해주자
-> - src/test/java 하위 파일 확인하지
-> - SQL과 연결되어있을경우 log4j.xml, log4jdbcpropertice 파일도 따로 변경 및 추가 필요
+> - JDBC, Mybatis를 테스트 할 경우 해당 설정 확인!
+> - log4j.xml 파일은 **/src/main/resource에만 있으면 된다!** ❌/src/test/resource 경로에는 없어도 된다!
 >
 > ---
 
