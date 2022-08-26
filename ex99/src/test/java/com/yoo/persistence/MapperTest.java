@@ -41,7 +41,4 @@ public class MapperTest {
 		System.out.println(blackGom.wanag2());
 	}
 	
-	
-	//,log4j 다르게,
-
 }
