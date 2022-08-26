@@ -23,24 +23,88 @@
 
 <hr style="margin:25px 0 25px 0"/>
 
-<h3>2) 기본적인 Controller 사용 </h3>
+<h3>2) URL 매핑 방법</h3>
+
+> ✅ URL별 화면 이동법
+>
+> > 기본적으로 **servlet-context.xml**의 directory경로 설정을 따른다.
+> >
+> > 👿 주의해야할 점은 class의 @RequestMapping("URL")가 void의 경우 경로에 포함 되고 String일경우는
+> > 따로 작성해 줘야한다는 것이다!
+> >
+> > ---
+>
+> - void Type : 요청받은 GET-URL의 이름을 따서 jsp를 반환
+> - String Type : return 하는 문자열의 이름을 따서 jsp를 반환
+>
+> ---
+
+<hr style="margin:25px 0 25px 0"/>
+
+<h3>3) 기본적인 Controller 사용 </h3>
 
 @See : [BoardController.java](https://github.com/edel1212/springStudy/blob/main/ex00/src/main/java/org/zerock/controller/BoardController.java)
 
 <hr style="margin:25px 0 25px 0"/>
 
-<h3>3) RESTController 사용 </h3>
+<h3>4) RESTController 사용 </h3>
 
 @See : [FetchController.java](https://github.com/edel1212/springStudy/blob/main/ex00/src/main/java/org/zerock/controller/FetchController.java)
 
+> fetch 사용법
+>
+> 👿주의 사항
+>
+> - prameter는 fetch의 body에 넣어줘야함 :: headers{ "Content-Type" : 맞춰줘야함! }
+> - 데이터를 response(반환) 시킬때는 json 형식의 데이터를 반환 해야할 경우
+>   > pom.xml : jackson-databind, jackson-dataformat-xml, gson 추가가 필요하다!
+>   >
+>   > ***
+>
+> ---
+
+```javascript
+/**
+ * javascript
+ * **/
+
+fetch("URL", {
+  method: "POST", // *GET, POST, PUT, DELETE 등
+  mode: "cors", // no-cors, *cors, same-origin
+  cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+  credentials: "same-origin", // include, *same-origin, omit
+  headers: {
+    Accept: "application/json", // 요청받은 데이터 타입
+    "Content-Type": "application/json", //내가 보내는 파라미터 형식
+    // 'Content-Type': 'application/x-www-form-urlencoded',
+  },
+  //redirect: 'follow', // manual, *follow, error
+  referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+  body: JSON.stringify(data), // body의 데이터 유형은 반드시 "Content-Type" 헤더와 일치해야 함
+})
+  .then((status) => {
+    /**
+     * @Description : fetch의 단점은 catch 분에서 error를 명확하게
+     * 				 표현을 못해준다는 점이다 따라서 status를 사용해서 에러 코드를 확인하는 방법으로 처리
+     */
+    console.log(status);
+    return status;
+  })
+  .then((response) => response.json())
+  .then((data) => {
+    console.log(data);
+  })
+  .catch((err) => console.log(err));
+```
+
 <hr style="margin:25px 0 25px 0"/>
 
-<h3>4) 기본적 흐름 </h3>
+<h3>5) 기본적 흐름 </h3>
  <p>✔ Controller -> Service -> ServiceImpl -> Mapper -> Mapper.xml </p>
 
 <hr style="margin:25px 0 25px 0"/>
 
-<h3>5) root-context.xml ❔ </h3>
+<h3>6) root-context.xml ❔ </h3>
 
 > - Bean 주입 Class 경로 설정 ,Aop ,Tx, jdbc 설정이 가능하다
 > - 기억해 둘것 context:component-scan은 Namespaces에서 context를 체크해 줘야한다
@@ -53,7 +117,7 @@
 > ---
 
 <hr style="margin:25px 0 25px 0"/>
-<h3>6) Mapper.xml을 만들지 않고도 쿼리 사용이 가능함.</h3>
+<h3>7) Mapper.xml을 만들지 않고도 쿼리 사용이 가능함.</h3>
 <p>✔ Mapeer를 사용할 interface의 메서드에 어노테이션 사용.</p>
   ex)
 
@@ -64,7 +128,7 @@
 
 <hr style="margin:25px 0 25px 0"/>
 
-<h3>7) Mapper_Interface => Mapper.xml 읽는 연결 방법 및 주의사항</h3>
+<h3>8) Mapper_Interface => Mapper.xml 읽는 연결 방법 및 주의사항</h3>
 
 > - xml의 상단 xml이 myBatis를 사용할것이라는 선언을 해줘야함
 
@@ -77,13 +141,13 @@ ex)
 > - ..../main//java/mapper/interface파일 경로와 src/main/resources/....xml
 >   > ✅ **파일의 경로와 파일명은 같게** 끔 해주자! **_ ✔ 또한 namespace도 꼭 확인해주자!!✔_**
 >   >
->   > 해당 설정을 바꾸고 싶다면 MyBatis Mapper 파일 설정을 변경해주면 된다 [링크]("https://bigfat.tistory.com/98")
+>   > 해당 설정을 바꾸고 싶다면 MyBatis Mapper 파일 설정을 변경해주면 된다 >> [링크]("https://bigfat.tistory.com/98")
 >
 > ---
 
 <hr style="margin:25px 0 25px 0"/>
 
-<h3>8) Junit Test 방법</h3>
+<h3>9) Junit Test 방법</h3>
 
 > - **✔ 중요 :** JUnit이 없을 경우 => 프로젝트 우 클릭 => properties => Java Build Path
 >   => Libaries => add Libary... => JUnit4 추가 해주자
@@ -111,7 +175,7 @@ ex)
 
 <hr style="margin:25px 0 25px 0"/>
 
-<h3>9) JDBC 사용 시 메이븐 설정</h3>
+<h3>10) JDBC 사용 시 메이븐 설정</h3>
 
 > - 해당DB jdbc , connectionPool[히카리 사용], mybatis, mybatis-spring ,spring-jdbc , org.bgee.log4jdbc-log4j2
 > - 또 하나 중요한건 pom 하단 maven-compiler-plugin 버전을 내가 상단 사용하는 java 버전와 맞춰야함!!!
