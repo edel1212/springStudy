@@ -49,14 +49,20 @@
 
 <h3>4) RESTController 사용 </h3>
 
+> 일반 Controller 와 다른점은 @RestController가 사용된다는 점이다
+>
+> ✅ 화면은 반환하는 controller가 아니라 데이터를 반환 목적으로 쓰는 Controller
+>
+> Method마다 @ResponseBody가 필요없음!
+
 @See : [FetchController.java](https://github.com/edel1212/springStudy/blob/main/ex00/src/main/java/org/zerock/controller/FetchController.java)
 
 > fetch 사용법
 >
 > 👿주의 사항
 >
-> - prameter는 fetch의 body에 넣어줘야함 :: headers{ "Content-Type" : 맞춰줘야함! }
-> - 데이터를 response(반환) 시킬때는 json 형식의 데이터를 반환 해야할 경우
+> - parameter는 fetch의 body에 넣어줘야함 :: headers{ "Content-Type" : 맞춰줘야함! }
+> - 데이터를 response(반환) 시킬때 json 형태라면
 >   > pom.xml : jackson-databind, jackson-dataformat-xml, gson 추가가 필요하다!
 >   >
 >   > ***
@@ -95,6 +101,55 @@ fetch("URL", {
     console.log(data);
   })
   .catch((err) => console.log(err));
+```
+
+> ResponseEntity 사용법
+>
+> 👿주의 사항 : URL 경로를 조심하자!
+>
+> ---
+
+```java
+  /**
+    Java
+    - 아래는 예시 원하는 대로 커스텀해서 상태 및 header를 컨트롤해주자!
+  */
+
+  /**
+	 * @Descripion : Spring Framework에서 제공하는 클래스 중 HttpEntity라는 클래스가 존재한다.
+	 * 				이것은 HTTP 요청(Request) 또는 응답(Response)에
+	 * 				해당하는 HttpHeader와 HttpBody를 포함하는 클래스이다.
+	 *
+	 *              ✅ ResponseEntity는 HttpStatus, HttpHeaders, HttpBody 3가지를 포함하여 반환이 가능하다.
+	 *
+	 * 				- 에러 코드와 같은 HTTP상태 코드를 전송하고 싶은 데이터와 함께 전송할 수 있기 때문에 좀 더 세밀한 제어가 필요한 경우 사용
+	 * 				- http header에는 (요청/응답)에 대한 요구사항이
+	 *              - http body에는 그 내용이
+	 *              - Response header 에는 웹서버가 웹브라우저에 응답하는 메시지가 들어있고, Reponse body에 데이터 값이 들어가있다고 합니다.
+	 *
+	 * 				 1) <반환 데이터 타입>
+	 *               2) 필수적으로 HttpStatus를 매개변수에 추가하여 return 해줘야한다.
+	 *
+	 *
+	 * */
+	@GetMapping("/getData/{bno}")
+	public ResponseEntity<statusVo> getData(@PathVariable Long bno){
+		log.info("bno :::" + bno);
+		//반환할 Map
+		statusVo result = new statusVo();
+
+		//Header Data Setting
+		HttpHeaders header = new HttpHeaders();
+        header.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+		//Body Data Setting
+		List<BoardVO> dataList = boardSvc.getList();
+		result.setDataList(dataList);
+		result.setMsg("성공입니다.");
+		result.setStatus("OK");
+
+		return new ResponseEntity<statusVo>(result, header, HttpStatus.OK);
+	}
 ```
 
 <hr style="margin:25px 0 25px 0"/>
