@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.yoo.domian.BoardVO;
-import com.yoo.mapper.BoardMapper;
 import com.yoo.mapper.TimeMapper;
+import com.yoo.service.BoardSvc;
 
 import lombok.extern.log4j.Log4j;
 
@@ -25,8 +25,8 @@ public class NormalController {
 	private TimeMapper timeMapper;
 	
 	@Autowired
-	private BoardMapper boardMapper;
-	
+	private BoardSvc boardSvc;
+
 	
 	@GetMapping("imVoid")
 	public void voidType(Model model) {
@@ -51,8 +51,10 @@ public class NormalController {
 	@ResponseBody
 	public List<BoardVO> async() {		
 		log.info("async");
-		return boardMapper.getBoard();
+		return boardSvc.getList();
 	}
+	
+	//TODO : Et
 	
 	//__Eof__
 }

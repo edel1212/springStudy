@@ -27,6 +27,9 @@
 	    <property name="dataSource" ref="dataSource"></property>
 	</bean>
 	
+	<!-- serivce  Scan -->
+	<context:component-scan base-package="com.yoo.service"/>
+		
 	<!-- Mapper Scan -->
 	<mybatis-spring:scan base-package="com.yoo.mapper"/>
 		
