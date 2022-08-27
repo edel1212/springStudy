@@ -9,13 +9,78 @@
 <hr style="margin:25px 0 25px 0"/>
 <h3>1) Controller</h3>
 
-> - method= {RequestMethod.GET , RequestMethod.??? , RequestMethod.??
+> 1 . URL 처리
+>
+> - method= {RequestMethod.GET , RequestMethod.??? , RequestMethod.??}
 >   처럼 배열을 사용해 한가지 URL로 여러 요청 Method를 처리 가능
 > - @GetMapping("??"), @PostMapping("??") 처럼 어노테이션으로 구분 요청 메서드 구분 가능
-> - 파라미터를 받을 때
->   > - 객체 형식(VO)
->   > - @RequestParam("name") String name,@RequestParam ("age")int age 처럼 받아올 수 도있음
->   > - (@RequestParam("name") List<String> nameArr) 배열도 가능하다
+>
+> - Produces, Consumes를 사용하여 데이터 제한이 가능하다.
+>   > - @Consumes : 수신 하고자하는 데이터 포맷을 정의한다. 🎈**요청 데이터 타입 제한하기 (consumes)**
+>   >
+>   > 👿 주의사항! @GetMapping(value = "/URL" , <<== 와 같이 value ="URL "해줘야함!
+>   >
+>   > ```java
+>   > /**Java */
+>   >
+>   > //Controller
+>   > /**
+>   > * 이 핸들러에서는 body에 담긴 데이터의 타입이
+>   > * APPLIACTION_JSON_UTF8일 경우의 요청만을 처리한다는 의미입니다.
+>   > * 따라서 요청시 헤더에 꼭 application/json 이 존재해야합니다.
+>   > */
+>   > @GetMapping(value = "/test" , consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+>   > @ResponseBody
+>   > public String hello(){
+>   > return "hello";
+>   > }
+>   >
+>   > //////////////////////////////////////////////////////////////////////////////////
+>   >  //Junit Test
+>   > @Test
+>   > public void test1() throws Exception{
+>   > 	log.info(
+>   > 		mockMvc.perform(MockMvcRequestBuilders.get("/urlTest/test")
+>   > 		//.contentType(MediaType.APPLICATION_FORM_URLENCODED)) 에러 APPLICATION_FORM_URLENCODED❌
+>   > 		  .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)) //👍 성공 !
+>   > 			);
+>   > }
+>   >
+>   > ```
+>   >
+>   > - @Produces : 출력하고자 하는 데이터 포맷을 정의한다. 🎈**응답 데이터 제한하기(produces,headers)**
+>   >
+>   > ```java
+>   > /**Java */
+>   >
+>   > //Controller
+>   > @PostMapping( value ="/hello", produces = MediaType.TEXT_PLAIN_VALUE)
+>   > @ResponseBody
+>   > public String hello(){
+>   >
+>   > 	return "hello";
+>   >
+>   > }
+>   >
+>   > //////////////////////////////////////////////////////////////////////////////////
+>   > //Junit Test
+>   > @Test
+>   > 	public void testHello()throws Exception{
+>   > 	    mockMvc.perform(MockMvcRequestBuilders.post("/hello")
+>   > 	    		.accept(MediaType.TEXT_PLAIN_VALUE)); // 👍 맞춰주면된다!
+>   > }
+>   > ```
+>   >
+>   > ***
+>
+> ---
+>
+> 2 . parameter 처리
+>
+> - 객체 형식(VO)
+> - @RequestParam("name") String name,@RequestParam ("age")int age 처럼 받아올 수 도있음
+> - (@RequestParam("name") List<String> nameArr) 배열도 가능하다
+>
 > - (SampleDTOList list) List도 가능 SampleDTOList Class를 보면 생성자를 통해 Clsss 변수를 초기화 해줌.
 
 ```java
