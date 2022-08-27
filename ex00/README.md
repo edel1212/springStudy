@@ -54,6 +54,18 @@
 > ✅ 화면은 반환하는 controller가 아니라 데이터를 반환 목적으로 쓰는 Controller
 >
 > Method마다 @ResponseBody가 필요없음!
+>
+> 😡 주의사항 controller 단 parameter 받을 경우 @ReuqestBody가 필요함!
+>
+> ```java
+> // Java
+> public ResponseEntity<BoardVO>  getBoardEntityVer(@RequestBody BoardVO vo) {
+>    //Code..
+> }
+>
+> ```
+>
+> ---
 
 @See : [FetchController.java](https://github.com/edel1212/springStudy/blob/main/ex00/src/main/java/org/zerock/controller/FetchController.java)
 
@@ -204,8 +216,11 @@ ex)
 
 <h3>9) Junit Test 방법</h3>
 
-> - **✔ 중요 :** JUnit이 없을 경우 => 프로젝트 우 클릭 => properties => Java Build Path
->   => Libaries => add Libary... => JUnit4 추가 해주자
+> 1 . JDBC 및 service , Mapper 테스트
+>
+> **✅ 중요 :** JUnit이 없을 경우 => 프로젝트 우 클릭 => properties => Java Build Path
+> => Libaries => add Libary... => JUnit4 추가 해주자
+>
 > - JDBC, Mybatis를 테스트 할 경우 해당 설정 확인!
 > - log4j.xml 파일은 **/src/main/resource에만 있으면 된다!** ❌/src/test/resource 경로에는 없어도 된다!
 >
@@ -228,6 +243,29 @@ ex)
 >
 > ---
 
+> 2 . RestController 테스트
+>
+> > ✅ 중요 :: pom의 servlet 버전을 올려줘야한다 3.1 이하버전은 SessionCookieConfig를 못찾는 에러가 있음
+> >
+> > ✅ @WebAppConfigurationf를 꼭 추가해주자!
+> >
+> > @참고 파일 : [RestControllerTests.java]("https://github.com/edel1212/springStudy/blob/main/ex00/src/test/java/org/zerock/controller/RestControllerTests.java")
+> >
+> > ```xml
+> >   <!-- pom.xml -->
+> >
+> >   <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
+> > 		<dependency>
+> > 		    <groupId>javax.servlet</groupId>
+> > 		    <artifactId>javax.servlet-api</artifactId>
+> > 		    <version>3.1.0</version>
+> > 		    <scope>provided</scope>
+> > 		</dependency>
+> > ...
+> > ```
+> >
+> > ---
+
 <hr style="margin:25px 0 25px 0"/>
 
 <h3>10) JDBC 사용 시 메이븐 설정</h3>
@@ -245,3 +283,7 @@ ex)
 >   > @See : [root-context.xml](https://github.com/edel1212/springStudy/blob/main/ex00/src/main/webapp/WEB-INF/spring/root-context.xml)
 >
 > ---
+
+```
+
+```

@@ -29,6 +29,9 @@ public class RestControllerTests {
 	@Autowired
 	private WebApplicationContext ctx;
 	
+	/**
+	 * 의존성 주입 필요없음
+	 * */
 	private MockMvc mockMvc;
 	
 	@Before
