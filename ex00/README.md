@@ -67,6 +67,58 @@
 >
 > ---
 
+> Async 통신 시
+>
+> ResponseEntity 타입의 메서드를 사용하거나 @ResponseBody, @RestController를 사욯하면 된다.
+
+```java
+   ex)	//ResponseEntity방식
+		/**
+		 *  ResponseEntity는 좀더 세심하게 통신 컨트롤이 가능하다!
+		 * **/
+		@GetMapping("/ex07")
+		public ResponseEntity<String> ex07(){
+			log.info("/ex07...");
+			//{"name" : "yoo"};
+			String msg = "{\"name : \" : \"yoo\"}";
+			HttpHeaders header = new HttpHeaders();
+			header.add("Content-Type", "applcation/json;charset=UTF-8");
+			return new ResponseEntity<>(msg, header, HttpStatus.OK);
+		}
+```
+
+```java
+ ex) //ResponseBody 방식
+		/**
+		 * 1. 사용하려는 메서드 상단에 @ResponseBody 를 붙여줘야함
+		 *    단! 사용하려는 Controller Class에서 전체가 비동기 통신을 하는
+		 *        컨트롤러라면 @RestController를 사용하면 메서드마다 붙여줄 필요가 없다
+		 *
+		 * 2. 주의 해야할점은 파라미터를 받을 경우 앞에 @RequestBody 어노테션을
+		 *    붙여줘야 인식이 가능가능!
+		 *
+		 * 3. javascript에서도 요청 시 파라미터를 string으로 풀어서 전달해 줘야함!
+		 *
+		*/
+
+		//Java
+		@PostMapping("/registerReply")
+			public int registerReply(@RequestBody ReplyVO vo){
+			log.info("registerReply...");
+			return replyService.registerReply(vo);
+		}
+
+
+		//javascript 데이터 전송(fetch 사용)
+	    fetch("/RESTAPI/registerReply"{
+			method: "POST",
+			headers: {
+			Accept: "application/json",  		// 받는 타입
+			"Content-Type": "application/json", //넘기는 데이트
+        }, body: JSON.stringify(modiObj)  //[중요✔] JSON.stringify 문자로 넘겨야함
+		}).....
+```
+
 @See : [FetchController.java](https://github.com/edel1212/springStudy/blob/main/ex00/src/main/java/org/zerock/controller/FetchController.java)
 
 > fetch 사용법
