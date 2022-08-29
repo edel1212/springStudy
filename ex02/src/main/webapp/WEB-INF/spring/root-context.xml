@@ -25,7 +25,7 @@
 	<!-- Aop Scan -->
 	<context:component-scan base-package="org.zerock.aop"/>
 	<!-- aspectj add -->
-	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>		
+	<aop:aspectj-autoproxy/>		
 	
 	<!--  ==================== Transaction setting ==================== -->
 	<!-- 
@@ -64,7 +64,8 @@
 	<tx:annotation-driven/>
 	
 	 <bean id="transactionManager"  class="org.springframework.jdbc.datasource.DataSourceTransactionManager" >
-	 	<property name="dataSource" ref="dataSource"></property>
+	 	<!-- ref="dataSource"는 내가 상단에 설정한 JDBC Bean Id 값임! -->
+	 	<property name="dataSource" ref="dataSource"/>
 	 </bean>
 	 
 	
