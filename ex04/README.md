@@ -1,68 +1,118 @@
-<h1> Spring Security </h1>
+b<h1> Spring Security </h1>
 
 기본적으로 스프링 시큐리티는 인터셉터와 같은 방식 진행된다.
 
 <hr style="margin:25px 0 25px 0"/>
 <h3>1 ) pom 설정</h3>
 
-> - spring-security-web, spring-security-config, spring-security-core, spring-security-taglibs
+> ✅ 메이븐 추가
 >
->   @See : [pom.xml]("https://github.com/edel1212/springStudy/blob/main/ex04/pom.xml")
+> 🎈주의 사항 : 4개의 버전이 모두 같아야한다!
 >
-> ✅ 해당 4개 jar파일은 메이븐에 주입해줘야하며 **_버전은 꼭 같아야한다!_**
+> ```xml
+> <!-- pom.xml -->
+> 		<!-- ================================================== -->
+> 		<!-- spring security를 위한 maven 주입 4개의 버전이 같아야함!   -->
+> 		<!-- security-web,  security-config, 				    -->
+> 		<!-- security-core,  security-config,   				-->
+> 		<!-- ================================================== -->
+> 		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-web -->
+> 		<dependency>
+> 		    <groupId>org.springframework.security</groupId>
+> 		    <artifactId>spring-security-web</artifactId>
+> 		    <version>${org.springframework-version}</version>
+> 		</dependency>
+>
+> 		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-config -->
+> 		<dependency>
+> 		    <groupId>org.springframework.security</groupId>
+> 		    <artifactId>spring-security-config</artifactId>
+> 		    <version>${org.springframework-version}</version>
+> 		</dependency>
+>
+> 		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+> 		<dependency>
+> 		    <groupId>org.springframework.security</groupId>
+> 		    <artifactId>spring-security-core</artifactId>
+> 		    <version>${org.springframework-version}</version>
+> 		</dependency>
+>
+> 		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-taglibs -->
+> 		<dependency>
+> 		    <groupId>org.springframework.security</groupId>
+> 		    <artifactId>spring-security-taglibs</artifactId>
+> 		    <version>${org.springframework-version}</version>
+> 		</dependency>
+> ```
+>
+> ---
 
 <hr style="margin:25px 0 25px 0"/>
 <h3>2 ) sercurity-context</h3>
 
-root-context.xml에서 진행해도 괜찮지만, 좀 더 의미에 맞게 개발하기 위해 xml을 나눠서 개발하는 방식을 선호함.
-
-> - 방법은 총 4가지를 나눠서 사용함.
+> root-context.xml에서 security설정을 해서 사용해도 되지만
 >
-> 🎈기본 설정 방법은
+> 좀 더 의미에 맞게 개발하기 위해 xml을 나눠서 개발하는 방식을 선호함.
 >
-> > - pom에 스프링 설정 메이븐을 추가해준다.
-> > - spring security를 설정한 xml을 만든다.
-> > - namespaces에서 **security** 체크 해준다.
-> >
-> >   👿여기서 중요한건 해당 xml의 상단 xsi:schemaLocation=의 security 버전을 지워줘야 에러가 안난다.
-> >
-> > - web.xml에서 내가 사용하려는 security를 읽을 수 있도록 설정해준다.
-> >
-> > ```xml
-> > <!-- web.xml -->
-> > <context-param>
-> > <param-name>contextConfigLocation<param-name>
-> > <param-value>/WEB-INF/spring/root-context.xml
-> >     /WEB-INF/spring/security-context-Final-Ver.xml
-> >     </param-value>
-> > 	</context-param>
-> >
-> >     <!-- ================================================== -->
-> > 	<!-- spring security가 스프링 MVC에서 사용되기 위해서 필터를 이용   -->
-> > 	<!-- 하여 스프링 동작에 관여하도록 설정                          -->
-> > 	<!-- ************************************************** -->
-> > 	<!-- filter와 mapping만으로는  springSecurityFilterChain  -->
-> > 	<!-- 빈이 제대로 설정되지 않아서 에러가 발생함 ( 스프링  시큐리티 설정 파일을  -->
-> > 	<!-- 찾을 수 없기 때문임 ) 따라서 security-context.xml을 읽을 수 -->
-> > 	<!-- 있도록 추가 설정을 해줘야함. -->
-> > 	<!-- ================================================== -->
-> > 	<filter>
-> >        <filter-name>springSecurityFilterChain</filter-name>
-> >        <filter-class>
-> >            org.springframework.web.filter.DelegatingFilterProxy
-> >        </filter-class>
-> >    </filter>
-> >
-> > 	<filter-mapping>
-> >        <filter-name>springSecurityFilterChain</filter-name>
-> >        <url-pattern>/*</url-pattern>
-> >    </filter-mapping>
-> >
-> > ```
-> >
-> > ---
+> ✅ 연습 방법은 총 4가지를 나눠서 사용함.
 >
-> ---
+> 🎈기본 설정
+>
+> - 1 . pom에 security 메이븐을 추가해준다. (4개)
+> - 2 .security의 Handler를 읽게 설정할 xml을 만든다.
+> - 3 .해당 만들어 놓은 xml의 namespaces에서 **security** 체크 해준다.
+>
+> 👿여기서 중요한건 해당 xml의 상단 xsi:schemaLocation=의 security 버전을 지워줘야 에러가 안난다.
+>
+> ```xml
+> <!-- security-conext.xml -->
+>
+> <beans xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.1.xsd "> <!-- 해당 버전부분을 지워줘야함 --> ></beans>
+>
+> <!-- 수정 후 ▼ -->
+>
+> <beans xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd ">
+> </beans>
+>
+> ```
+>
+> - 4 . web.xml에서 security-context.xml을 읽을 수 있도록 설정해준다.
+>
+> 🎈주의 사항 첫번째 : context-param 내부의 param-valu 안에 작성되어야한다.
+>
+> 🎈주의 사항 두번째 : filter설정 과 그 설정한 filter를 읽을 수 있도록 filter-mapping이 필요하다
+>
+> ```xml
+>   <!-- web.xml -->
+>   <context-param>
+>   	<param-name>contextConfigLocation<param-name>
+>  	 	<param-value>/WEB-INF/spring/root-context.xml
+>       	/WEB-INF/spring/security-context-Final-Ver.xml
+>   	</param-value>
+>   </context-param>
+>
+>       <!-- ================================================== -->
+>   	<!-- spring security가 스프링 MVC에서 사용되기 위해서 필터를 이용   -->
+>   	<!-- 하여 스프링 동작에 관여하도록 설정                          -->
+>   	<!-- ************************************************** -->
+>   	<!-- filter와 mapping만으로는  springSecurityFilterChain  -->
+>   	<!-- 빈이 제대로 설정되지 않아서 에러가 발생함 ( 스프링  시큐리티 설정 파일을  -->
+>   	<!-- 찾을 수 없기 때문임 ) 따라서 security-context.xml을 읽을 수 -->
+>   	<!-- 있도록 추가 설정을 해줘야함. -->
+>   	<!-- ================================================== -->
+>   	<filter>
+>          <filter-name>springSecurityFilterChain</filter-name>
+>          <filter-class>
+>              org.springframework.web.filter.DelegatingFilterProxy
+>          </filter-class>
+>      </filter>
+>
+>   	<filter-mapping>
+>          <filter-name>springSecurityFilterChain</filter-name>
+>          <url-pattern>/*</url-pattern>
+>      </filter-mapping>
+>
+> ```
 >
 > **security-conext.xml \_ 설정**
 >
@@ -80,26 +130,30 @@ root-context.xml에서 진행해도 괜찮지만, 좀 더 의미에 맞게 개�
 <hr style="margin:25px 0 25px 0"/>
 <h3>3 ) security 사용 패턴</h3>
 
-> 1 . 접근을 제한할 URL을 설정이 가능하다
+> 1 . 권한별 접근을 제한할 URL을 설정이 가능하다
 >
 > ✅ 아래와같이 intercept할 url 과 pattern으로 해당 권한에 따른 접근을 체한할 수 있지만
+>
+> ```xml
+>
+>    <!-- security-context.xml -->
+>
+>    <security:http >
+>        <!-- URL별 권한 -->
+>        <security:intercept-url pattern="/sample/All" access="permitAll"/>
+> 		<security:intercept-url pattern="/sample/member" access="hasRole('ROLE_MEMBER')"/>
+> 		<security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
+>    </security:http>
+>
+> ```
+>
+> **_ TODO :: 2022-09-05 여기서 부터 이어서 수정 작성해주자!_**
 >
 > 그렇게 되면 번거롭게 계속 추가 해줘야하는 수고가있다 따라서 아래와 같은 방법이 아닌 @PreAuthorize으로도 가능하다.
 >
 > 🎈단 이것은 [serlvet-context.xml]("https://github.com/edel1212/basicSpringProject/blob/main/src/main/webapp/WEB-INF/spring/appServlet/servlet-context.xml") 에 security:global-method-security 설정을 해줘야함!
 >
 > @See : [BoardController.java]("https://github.com/edel1212/basicSpringProject/blob/main/src/main/java/com/yoo/controller/BoardController.java")
-
-```xml
-    <!-- security-context.xml -->
-
-    <security:http >
-        <!-- URL별 권한 -->
-        <security:intercept-url pattern="/sample/All" access="permitAll"/>
-		<security:intercept-url pattern="/sample/member" access="hasRole('ROLE_MEMBER')"/>
-		<security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
-    </security:http>
-```
 
 > 2 . 로그인 및 로그인 성공 시 가게 될 handler를 작성 연결이 가능하다.
 >
