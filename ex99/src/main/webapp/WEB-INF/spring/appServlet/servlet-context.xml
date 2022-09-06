@@ -3,7 +3,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
 		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
 
@@ -33,5 +35,7 @@
 		class="org.springframework.web.multipart.support.StandardServletMultipartResolver">
 	</beans:bean>
 	
+	<!-- 스프링시큐리트 어노테이션을 사용하기 위한 설정 :: 상단 security 버전을 지워줘야 에러가 안남! -->
+	<security:global-method-security pre-post-annotations="enabled" secured-annotations="enabled"/>
 	
 </beans:beans>
