@@ -132,7 +132,7 @@ b<h1> Spring Security </h1>
 
 > 1 . 권한별 접근을 제한할 URL을 설정이 가능하다
 >
-> ✅ 아래와같이 intercept할 url 과 pattern으로 해당 권한에 따른 접근을 체한할 수 있지만
+> ✅ 아래와같이 intercept할 url 과 pattern으로 해당 URL에 따른 권한에 맞게 접근을 제한이 가능하다.
 >
 > ```xml
 >
@@ -147,16 +147,69 @@ b<h1> Spring Security </h1>
 >
 > ```
 >
-> **_ TODO :: 2022-09-05 여기서 부터 이어서 수정 작성해주자!_**
+> ✅위의 방법의 단점은 URL의 개수가 늘어날수록 추가 및 관리가 힘들다는 것이다
 >
-> 그렇게 되면 번거롭게 계속 추가 해줘야하는 수고가있다 따라서 아래와 같은 방법이 아닌 @PreAuthorize으로도 가능하다.
+> \_ 그럴경우 servlet-context.xml의 설정으로 어노테이션으로 처리가 가능하다.
 >
-> 🎈단 이것은 [serlvet-context.xml]("https://github.com/edel1212/basicSpringProject/blob/main/src/main/webapp/WEB-INF/spring/appServlet/servlet-context.xml") 에 security:global-method-security 설정을 해줘야함!
+> - 1 . servlet-context.xml에 namespaces에 security를 추가
+> - 2 . 추가 후 상단에 생긴 security 버전을 지워준다
+> - 3 . security:global-method-security 설정 추가
+>
+> ```xml
+> <!-- servlet-context.xml -->
+>
+> 	<!-- xml상단의 security 버전을 지워줘야한다. -->
+> 	<beans:beans
+> 		<!-- Code... -->
+> 		xsi:schemaLocation="http://www.springframework.org/schema/security
+> 		http://www.springframework.org/schema/security/spring-security.xsd"  >
+>
+> 	<!-- 스프링시큐리트 어노테이션을 사용하기 위한 설정 :: 상단 security 버전을 지워줘야 에러가 안남! -->
+> 	<security:global-method-security pre-post-annotations="enabled" secured-annotations="enabled"/>
+>
+> ```
+>
+> ✅위의 servlet-context.xml 설정이 되었다면 Cotnroller에서 어노테이션으로 접근 제한이 가능하다
 >
 > @See : [BoardController.java]("https://github.com/edel1212/basicSpringProject/blob/main/src/main/java/com/yoo/controller/BoardController.java")
-
-> 2 . 로그인 및 로그인 성공 시 가게 될 handler를 작성 연결이 가능하다.
 >
+> ```java
+> // Java - controller
+> 	//Code...
+>
+> 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')") // 해당 hasAnyRole ('접근권한') 으로 제한이 가능
+> 	@GetMapping("/register")
+> 	public String register(Model mdoel) {
+> 		log.info("register..");
+> 		return "/board/register";
+> 	}
+>
+> ```
+>
+> 2 . Login-Handler 사용 및 흐림
+>
+> 🎈 주의사항 : 모든 URL은 Mapping이 가능한 Controller가 필요하다 LoginPage도 예외가 아님!
+
+```xml
+<!-- security.xml -->
+	<!-- 로그인 핸들러 -->
+
+	<!-- CustomLoginSuccessHandler 빈 주입  -->
+	<bean id="customloginSuccess" class="org.zerock.security.CustomLoginSuccessHandler"/>
+
+	<!-- ====================================================================
+		login-processing-url               : 클라이언트 단에서 로그인 정보를 넘김 URL
+											[ 해당 설정이 없으면 form에서 넘기는 action URL을 알아서 인터셉팅해서 로그인체크를함 ]
+		login-page                         : 로그인 페이지 PageURL [ "/ABC/DEG/customLogin" ]로 하면 해당 URL을 찾아감!
+		authentication-success-handler-ref : 성공시 타게될 Handler 빈주입 설정 필요
+	==================================================================== -->
+	<security:form-login login-processing-url="/loginReq" login-page="/user/login" authentication-success-handler-ref="customloginSuccess"/>
+```
+
+## //TODO : 2022-09-06 이어서 작성 해당 Class와 클라이언트단 fetch로 로그인 테스트 필요 현재 form만 적용되는데 왜지?
+
+및 로그인 성공 시 가게 될 handler를 작성 연결이 가능하다.
+
 > ✅ 여기서 id="customloginSuccess" 로 빈 주입된 Class는 로그인이 성공 됐을 경우 타게되는 Class 이며 AuthenticationSuccessHandler르 구현 해줘야한다!
 >
 > @See : [CustomLoginSuccessHandler.java]("https://github.com/edel1212/basicSpringProject/blob/main/src/main/java/com/yoo/security/CustomLoginSuccessHandler.java)
