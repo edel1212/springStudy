@@ -25,6 +25,11 @@
 			<security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
 			
 			<!-- 로그인 핸들러 -->
+			<!-- ====================================================================
+				login-processing-url               : 클라이언트 단에서 로그인 정보를 넘김 URL
+				login-page                         : 로그인 페이지 PageURL [ "/ABC/DEG/customLogin" ]로 하면 해당 URL을 찾아감!
+				authentication-success-handler-ref : 성공시 타게될 Handler 빈주입 설정 필요
+			==================================================================== -->
 			<security:form-login login-page="/customLogin" authentication-success-handler-ref="customloginSuccess"/>
 			
 			<!-- 잘못된 접근시 핸들러 -->
