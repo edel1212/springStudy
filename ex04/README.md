@@ -189,40 +189,101 @@ b<h1> Spring Security </h1>
 > 2 . Login-Handler 사용 및 흐림
 >
 > 🎈 주의사항 : 모든 URL은 Mapping이 가능한 Controller가 필요하다 LoginPage도 예외가 아님!
-
-```xml
-<!-- security.xml -->
-	<!-- 로그인 핸들러 -->
-
-	<!-- CustomLoginSuccessHandler 빈 주입  -->
-	<bean id="customloginSuccess" class="org.zerock.security.CustomLoginSuccessHandler"/>
-
-	<!-- ====================================================================
-		login-processing-url               : 클라이언트 단에서 로그인 정보를 넘김 URL
-											[ 해당 설정이 없으면 form에서 넘기는 action URL을 알아서 인터셉팅해서 로그인체크를함 ]
-		login-page                         : 로그인 페이지 PageURL [ "/ABC/DEG/customLogin" ]로 하면 해당 URL을 찾아감!
-		authentication-success-handler-ref : 성공시 타게될 Handler 빈주입 설정 필요
-	==================================================================== -->
-	<security:form-login login-processing-url="/loginReq" login-page="/user/login" authentication-success-handler-ref="customloginSuccess"/>
-```
-
-## //TODO : 2022-09-06 이어서 작성 해당 Class와 클라이언트단 fetch로 로그인 테스트 필요 현재 form만 적용되는데 왜지?
-
-및 로그인 성공 시 가게 될 handler를 작성 연결이 가능하다.
-
-> ✅ 여기서 id="customloginSuccess" 로 빈 주입된 Class는 로그인이 성공 됐을 경우 타게되는 Class 이며 AuthenticationSuccessHandler르 구현 해줘야한다!
 >
+> ```xml
+> <!-- security.xml -->
+> 	<!-- 로그인 핸들러 -->
+>
+> 	<!-- CustomLoginSuccessHandler 빈 주입  -->
+> 	<bean id="customloginSuccess" class="org.zerock.security.CustomLoginSuccessHandler"/>
+>
+> 	<!-- ====================================================================
+> 		login-processing-url               : 클라이언트 단에서 로그인 정보를 넘김 URL
+> 											[ 해당 설정이 없으면 form에서 넘기는 action URL을 알아서 인터셉팅해서 로그인체크를함 ]
+> 		login-page                         : 로그인 페이지 PageURL [ "/ABC/DEG/customLogin" ]로 하면 해당 URL을 찾아감!
+> 		authentication-success-handler-ref : 성공시 타게될 Handler 빈주입 설정 필요
+> 	==================================================================== -->
+> 	<security:form-login login-processing-url="/loginReq" login-page="/user/login" authentication-success-handler-ref="customloginSuccess"/>
+> ```
+>
+> ✅ 클라이언트단 전송
+>
+> 🎈주의 : 기본적으로 spring security는 csrf 공격을 방어하기위해 토큰값을 넘겨줘야한다!
+>
+> ```jsp
+> <!-- jsp -->
+>
+> 	<!-- form 사용 -->
+> 	<form method="post" action="/loginReq">
+> 		<input type="text" name="username" value="admin" >
+> 		<input type="password" name="password" value="admin" >
+> 		<input type="submit" >
+> 		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" >
+> 		<input type="checkbox" name="remember-me"> Remember Me
+> 	</form>
+>
+> 	<!-- ===================================================================== -->
+>
+> 	<!-- fetch 사용 -->
+> 	<button id="fetchBtn">Fetch Login Btn</button>
+>
+> 	<script>
+>
+> 		document.querySelector("#fetchBtn").addEventListener("click",(e)=>{
+> 			fetch("/loginReq",{
+> 			      method: "POST",
+> 			      headers: {
+> 			        Accept: "application/json",
+> 					//보내는 데이터 타입은 apllication/json 이 아니다!
+> 			        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+> 					//해당 Key값은 header에 들어가는 형식이므로 ${_csrf.parameterName}사용❌
+> 			        "X-CSRF-TOKEN": "${_csrf.token}",
+> 			      },
+> 				  // 따라서 보내는 파라미터 형식도 URLSearchParams()를 사용!
+> 			      body: new URLSearchParams({
+> 			    	  "username" : "admin90",
+> 			    	  "password" : "pw90"
+> 			      })
+> 			}).then((response) => {
+> 				/**
+> 				* @Description : 성공 시 받아온 값은 response.json()가 불가능하다!
+> 				                 로그인 방식은 비동기 처리보다는 form 처리 방식이
+> 				                 더 간단하고 처리도 확실해보인다!
+> 				**/
+> 				console.log(response);
+> 				})
+>     		.catch((error) => console.log(error));
+>
+> 		});//click
+>
+> 	</script>
+>
+> ```
+
+//// TODO : 09-09 성공전 Detail로 분기처리 하는 부분먼저 작성핑효애보임
+
+> ✅ 로그인 성공 시
+>
+> ```xml
+> <!-- security-context.xml -->
+>
+>    <!-- CustomLoginSuccessHandler 빈 주입  -->
+> 	<bean id="customloginSuccess" class="org.zerock.security.CustomLoginSuccessHandler"/>
+>
+>    <security:http >
+>        <!-- 로그인 핸들러 -->
+>        <security:form-login login-processing-url="/loginReq"
+> 			login-page="/user/login" authentication-success-handler-ref="customloginSuccess"/>
+>    </security:http >
+>
+> ```
+>
+> 🎈주의 : id="customloginSuccess" 로 빈 주입된 Class는 로그인이 성공
+> 됐을 경우 타게되는 Class 이며
+>
+> \_\_ 해당 Class는 Interface인 AuthenticationSuccessHandler를 구현 해줘야한다!
+
 > @See : [CustomLoginSuccessHandler.java]("https://github.com/edel1212/basicSpringProject/blob/main/src/main/java/com/yoo/security/CustomLoginSuccessHandler.java)
-
-```xml
-    <!-- CustomLoginSuccessHandler 빈 주입  -->
-	<bean id="customloginSuccess" class="org.zerock.security.CustomLoginSuccessHandler"/>
-
-    <security:http >
-        <!-- 로그인 핸들러 -->
-        <security:form-login login-page="/customLogin" authentication-success-handler-ref="customloginSuccess"/>
-    </security:http >
-```
 
 > 3 . 권한에 맞지 않는 잘못된 접근일 경우 hanlder 작성도 가능하다.
 > ✅ customAccessDenied는 AccessDeniedHandler를 구현한 Class로 접근이 제한된 페이지 도달 시 작성이 가능하다.
