@@ -2,6 +2,16 @@ b<h1> Spring Security </h1>
 
 기본적으로 스프링 시큐리티는 인터셉터와 같은 방식 진행된다.
 
+👿 Spring Security 사용시 주의 할것은
+
+1 . 비동시 통신 시 csrf-token값을 넘겨주자!
+
+- 기억해두어야 header로 값을 넘겨주는것과 body로 값을 넘겨줄 때 key값이 다르다
+
+- header : `X-CSRF-TOKEN` : `${_csrf.token}`
+
+- body : `${_csrf.parameterName}` : `${_csrf.token}`
+
 <hr style="margin:25px 0 25px 0"/>
 <h3>1 ) pom 설정</h3>
 
@@ -259,10 +269,216 @@ b<h1> Spring Security </h1>
 > 	</script>
 >
 > ```
-
-//// TODO : 09-09 성공전 Detail로 분기처리 하는 부분먼저 작성핑효애보임
-
+>
+> ✅ 서버단 ID, PW 확인 [ security:authentication-manager ]
+>
+> 🔽 인증과 권한 처리는 security:authentication-manager의 설정에 맞춰서 한다!
+>
+> ```xml
+> <!-- security-context.xml -->
+>
+> 	<!-- CustomUserDetailsService 빈 주입  -->
+> 	<bean id="customUserDetailsService"  class="com.yoo.security.CustomUserDetailsService"/>
+>
+> 	<!-- 인증과 권한 처리 -->
+> 		<security:authentication-manager>
+>
+> 			<!--==============================================================
+> 				UserDetailsService를 이용한 로그인처리
+> 				 ✅ 상단에 bean으로 주입해준 CustomUserDetailsService를 사용
+> 				    해당 빈은 UserDetailsService구현한 구현체이며
+> 				    로그인 시 Custom 한 service 로직을 사용함
+> 				    @see : CustomUserDetailsService.java
+> 			==============================================================-->
+> 			<security:authentication-provider user-service-ref="customUserDetailsService">
+>
+> 				<!-- security에서 제공하는 암호화 클래스를 불러서 빈으로 만든 후 암호화에 사용 -->
+> 				<security:password-encoder ref="bcryptPasswordEncoder"/>
+>
+> 			</security:authentication-provider>
+>
+> 		</security:authentication-manager>
+>
+> ```
+>
+> ✅ 로그인 정보 확인 [ UserDetailsService ]
+>
+> 🎈 주의사항 : 클라이언트단에서 넘겨주는 pw의 key값은 **password**이어야 한다!
+>
+> 🔽 해당 Class는 UserDetailsService Interface를 구현한 Class이다!
+>
+> - 1 . login 정보가 들어오면 체크를 하는 Handler이다
+> - 2 . UserDetailsService에서는 loadUserByUsername(String params)를 구현하게 한다
+> - 3 . 해당 메서드의 반환 타입은 **UserDetails**이다
+> - 4 . 메서드의 반환 정보가 null 인지 아닌지로 로그인 성공 여부를 판단한다.
+> - 5 . 해당 Detailservice를 구현해서 좋은 점은 Security에 정한 정보뿐만 아닌 내가 정한 컬럼명이나 정보를 추가가 가능하다는 것이다.
+> - 6 . 해당 Class를 파악할 때는 다형성을 확인하면서 보도록 하자!
+>
+> ```java
+> // Java
+>
+> /*******************************************************************************/
+> /*************************CustomUserDetailsService*****************************/
+> /*******************************************************************************/
+> 	/**
+> 	 * @Description : 1) 클라이언트 단에서 넘겨준 데이터를 기준으로 UserDetails를 반환하는 Class
+> 	 * 				     CustomUser를 이용하여 id , pw, auth를 기존 security에서쓰는
+> 	 * 				     username이 아닌 userid 변환 및 내가 원하는 정보를 추가하여 객체 상태로
+> 	 *				     전달해 주며 반환값의 유무로 로그인 성공 필패를 분기해준다.
+> 	*
+> 	*
+> 	* 				  	2) 여기서 핵심 로식은 	return vo == null ? null : new CustomUser(vo); 쪽
+> 	* 						CustomUser.java의 부모Class의 super()에서 생성자 데이터를 만들어줄때 비밀번호를 체크한다!
+> 	* */
+> 	@Log4j
+> 	public class CustomUserDetailsService implements UserDetailsService{
+>
+> 		@Autowired
+> 		private MemberMapper memberMapper;
+>
+> 		@Override
+> 		public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+> 		log.warn("Load User By UserName : " + username);
+>
+> 		//받아온 ID를 통해 정보를 가져옴 pw 체크를 하진 않음
+> 		MemberVO vo = memberMapper.getMemberInfo(username);
+>
+> 		log.warn("queried by member Mapper :: " + vo);
+>
+> 		/***
+> 		 * 값이 있을 경우 CustomUser에 Mybatis를 통해 얻어온 데이터를
+> 		 * 주입하여 객체변수를 return 해준다
+> 		 *
+> 		 * ✔ 해당 CustomUser객체를 생성할때 pw를 확인한다.
+> 		 *    - 해당 class의 부모 class인 User의 생성자에서!
+> 		 * */
+> 		return vo == null ? null : new CustomUser(vo);
+> 	}
+>
+> 	/*******************************************************************************/
+> 	/********************************CustomUser************************************/
+> 	/*******************************************************************************/
+>
+> 	/**
+> 	 * @Desripction : 해당 class는 Security에서 제공하는
+> 	 *  			  User.java 파일을 상속 받아 사용하며
+> 	 *  			  로그인에 관한 정보를 갖는 class이다.
+> 	 *
+> 	 *  			  ✅ 해당 class를 사용 하는 이유는
+> 	 *                   기존에 제공하는 Security의 로그인 정보 말고도
+> 	 *                   다른 다양한 정보를 추가하여 사용 가능
+> 	 *
+> 	 *                ✅ username으로 ID를 사용하는데 이러한 헷갈릴 수
+> 	 *                   있는 변수를 내가 커스텀하여 사용 이 가능하단 점이다
+> 	 *
+> 	 *                ✅ 해당 객체는 부모 class읜 User의 생성에 필요한
+> 	 *                   변수를 맞춰서 넣어준 후 인증에 사용학ㅎ
+> 	 *                   변수인 MemberVO member에 데이터를 주입
+> 	 *                   ex) this.member = vo
+> 	 *                   로 넣어주어 불러서 사용이 가능하다는 장점이 있다!
+> 	 *                   @see : admin.jsp << security tag를 이용해서 사용중
+> 	 *
+> 	 *                   * jsp 내 tag 명령어
+> 	 *                     - hasRole(??)       		: 해당 권한이 있으면 TRUE를 반환
+> 	 *                     - hasAuthority??()  		: 해당 권한이 있으면 TRUE를 반환
+> 	 *
+> 	 *                     - hasAnyRole([??,??])    : 여러 권한중 하나라도 해당하면 TURE
+> 	 *                     - hasAnyAuthority([???]) : 여러 권한중 하나라도 해당하면 TURE
+> 	 *
+> 	 *                     - principal 				: 현재 사용자의 정보를 의미
+> 	 *                     - permitAll				: 모든 사용자에게 허용
+> 	 *                     - denyAll				: 모든 사용자에게 거부
+> 	 *
+> 	 *                     - isAnonymous() 			: 익명의 사용자의 경우 로그인을 하지 않은 경우에 해당
+> 	 *                     - isAuthenticated() 		: 인증된 사용자라면 TRUE
+> 	 * **/
+> 	@Getter
+> 	public class CustomUser extends User{
+>
+> 		private static final long serialVersionUID = 1L;
+>
+> 		private MemberVO member;
+>
+> 		public CustomUser(String username
+> 						, String password
+> 						, Collection<? extends GrantedAuthority> authorities) {
+> 			super(username, password, authorities);
+> 		}
+>
+> 		public CustomUser(MemberVO vo) {
+> 			super( vo.getUserid()
+> 				, vo.getUserpw()
+> 				, vo.getAuthList().stream()
+> 								.map(auth -> new SimpleGrantedAuthority(auth.getAuth())) // 권한 목록은 SimpleGrantedAuthority을사용해서 변환해 줘야한다!
+> 								.collect(Collectors.toList())
+> 				);
+> 			this.member = vo;
+> 		}
+>
+> 	}
+>
+>
+> }
+>
+> ```
+>
+> ✅ 로그인 실패 시 [AccessDeniedHandler]
+>
+> 🔽 security-conext
+>
+> ```xml
+> <!-- security-context.xml -->
+>
+> 	<!-- CustomAccessDeniedHandler 빈 주입  -->
+>    <bean id="customAccessDenied" class="com.yoo.security.CustomAccessDeniedHandler"/>
+>
+> 	<!-- 잘못된 접근시 핸들러 -->
+> 	<security:http>
+> 		<!-- Bean 주입 필요 -->
+> 		<security:access-denied-handler ref="customAccessDenied"/>
+> 	</security:http>
+>
+> ```
+>
+> 🔽 AccessDeniedHandler 구현 Class
+>
+> ```java
+> //Java
+>
+> /**
+> * @Description : 해당 클래스는 AccessDeniedHandler 인터페이스를 직접 구현하였고
+> * 				  해당 인터페이스의 메서드는 handle()뿐이기 떄문에
+> * 				  HttpServletRequest, HttpServletPesponse를 파라미터로
+> * 				  사용할 수 있기때문에 직접적으로 서블릿 API를 이용하여 처리가 가능하다
+> *
+> *
+> *                @See : root-context에 bean을 주입하지 않고
+> *                       security-context에서 bean을 주입해줌
+> * */
+> @Log4j
+> public class CustomAccessDeniedHandler implements AccessDeniedHandler{
+>
+> 	@Override
+> 	public void handle(HttpServletRequest request, HttpServletResponse response,
+> 			AccessDeniedException accessDeniedException) throws IOException, ServletException {
+>
+> 		log.error("Access Denied Handler");
+>
+> 		log.error("Redirect....");
+>
+> 		// 이동 시켜버린다.
+> 		response.sendRedirect("/accessError");
+>
+> 	}
+>
+> }
+> ```
+>
 > ✅ 로그인 성공 시
+>
+> 🎈주의 :customloginSuccess Class는 Interface인 AuthenticationSuccessHandler를 구현 해줘야한다!
+>
+> 🔽 security-context.xml
 >
 > ```xml
 > <!-- security-context.xml -->
@@ -278,181 +494,125 @@ b<h1> Spring Security </h1>
 >
 > ```
 >
-> 🎈주의 : id="customloginSuccess" 로 빈 주입된 Class는 로그인이 성공
-> 됐을 경우 타게되는 Class 이며
+> 🔽 AuthenticationSuccessHandler를 구현한 Class
 >
-> \_\_ 해당 Class는 Interface인 AuthenticationSuccessHandler를 구현 해줘야한다!
-
-> @See : [CustomLoginSuccessHandler.java]("https://github.com/edel1212/basicSpringProject/blob/main/src/main/java/com/yoo/security/CustomLoginSuccessHandler.java)
-
-> 3 . 권한에 맞지 않는 잘못된 접근일 경우 hanlder 작성도 가능하다.
-> ✅ customAccessDenied는 AccessDeniedHandler를 구현한 Class로 접근이 제한된 페이지 도달 시 작성이 가능하다.
+> ```java
+> //Java
+> 	/**
+> 	 * @Description : 로그인이 성공하면 타게되는 Class
+> 	 *                성공 이후 특정한 동작을 제어하기위해 AuthenticationSuccessHandler를
+> 	 *                구현한 후 security-context에서 bean주입을 통해 사용한다.
+> 	 * */
+> 	@Log4j
+> 	public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler{
+> 		@Override
+> 		public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+> 				Authentication authentication) throws IOException, ServletException {
 >
-> @See : [CustomAccessDeniedHandler.java]("https://github.com/edel1212/basicSpringProject/blob/main/src/main/java/com/yoo/security/CustomAccessDeniedHandler.java)
-
-```xml
-
-    <security:http >
-        <!-- 잘못된 접근시 핸들러 -->
-		<security:access-denied-handler ref="customAccessDenied"/>
-    </security:http >
-```
-
+> 			log.warn("Login Success");
+> 			List<String> roleNames = new ArrayList<>();
+>
+> 			//authentication를 사용해서 로그인 성공한 유저의 데이터를 server단에서 사용가능
+> 			CustomUser vo =  (CustomUser) authentication.getPrincipal();
+> 			log.info("vo :: " + vo);
+>
+> 			//권한 확인 한가지 종류의  권한이 아닐수 있으므로 배열로 들어옴
+> 			authentication.getAuthorities().forEach(authority -> {
+> 				roleNames.add(authority.getAuthority());
+> 			});
+>
+> 			log.warn("ROLE NAMES :: " + roleNames);
+>
+> 			if(roleNames.contains("ROLE_ADMIN")) {
+> 				response.sendRedirect("/sample/admin");
+> 				return;
+> 			}
+>
+> 			if(roleNames.contains("ROLE_MEMBER")) {
+> 				response.sendRedirect("/sample/member");
+> 				return;
+> 			}
+>
+> 			//권한이 없을경우 그냥 기본 페이지로
+> 			response.sendRedirect("/");
+>
+> 		}
+>
+> 		//__Eof__
+> 	}
+> ```
+>
 > 4 . 로그아웃 처리
-
-```xml
-    <!-- 로그아웃 시 핸들러 -->
-    <security:http >
-        <!-- 로그아웃 시 쿠키삭제 -->
-			<security:logout logout-url="/logout" logout-success-url="/" invalidate-session="true"
-				delete-cookies="remember-me,JSESSION_ID" /> <!-- JSESSION_ID는 톰겟에서 발행한 쿠키의 이름이다 -->
-    </security:http >
-```
-
-> 5 . 쿠키에 계정 정보를 기억 remember-me 자동로그인 기능
-
-```xml
-    <!--
-				자동로그인 설정 :: 커스텀하여 사용할 것이 아니라면 시큐르티 구조에 맞는 table이 생성되어 있어야함
-				               ex) CREATE TABLE persistent_logins (
-									username VARCHAR(64) NOT NULL
-									, series VARCHAR(64) PRIMARY KEY
-									, token VARCHAR(64) NOT null
-									, last_used TIMESTAMP NOT null
-								)
-
-				✅ @see: [name='rememeber-me']를 사용하여 파라미터 key값을 맞춰
-				   확인 유무를 전달하는것으 확인 할 수 있다.
-			-->
-			<security:remember-me data-source-ref="dataSource" token-validity-seconds="604800"/>
-```
-
-> 5 . DB를 이용하여 로그인 확인을 하기 위해선
-
-- 회원의 정보 table의 형식을 맞춰줘야 하는 번거로움이 있는데 그럴때는 핸들러를 생성하여 내가 custom하여 DB를 만들어 줄 수있다.
-- CustomUserDetailsService에서 처리하지만 해당 Class에서 반환 하는 **_new CustomUser(vo)_** 쪽의 생성자 쪽이 핵심 로직이다.
-
-```xml
-    <!-- ----------------------------------------------------------------------- -->
-    ✅여기서 중요한 것은 시큐리티에서 지원하는 비밀번호 암호화인
-    **org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder** 를 빈으로 주입해 준 후
-    <security:authentication-provider>
-    </security:authentication-provider>
-    안에 넣어줘야 한다는 것이다!
-    <!-- ----------------------------------------------------------------------- -->
-    <!-- BCryptPasswordEncoder 빈 주입  -->
-		<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
-
-
-    <!-- CustomUserDetailsService 빈 주입  -->
-	<bean id="customUserDetailsService"  class="org.zerock.security.CustomUserDetailsService"/>
-
-   <!-- 인증과 권한 처리 -->
-		<security:authentication-manager>
-			<!-- UserDetailsService를 이용한 로그인처리
-					 ✅ 상단에 bean으로 주입해준 CustomUserDetailsService를 사용
-					    해당 빈은 UserDetailsService구현한 구현체이며
-					    로그인 시 Custom 한 service 로직을 사용함
-					    @see : CustomUserDetailsService.java -->
-			<security:authentication-provider user-service-ref="customUserDetailsService">
-				<!-- security에서 제공하는 클래스를 불러서 빈으로 만든 후 암호화에 사용 -->
-				<security:password-encoder ref="bcryptPasswordEncoder"/>
-			</security:authentication-provider>
-		</security:authentication-manager>
-
-```
-
-```java
-/**
-* java
-*/
-    @Log4j
-    public class CustomUserDetailsService implements UserDetailsService{
-
-	@Autowired
-	private MemberMapper memberMapper;
-
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		log.warn("Load User By UserName : " + username);
-
-		//받아온 ID를 통해 정보를 가져옴 pw 체크를 하진 않음
-		MemberVO vo = memberMapper.getMemberInfo(username);
-
-		log.warn("queried by member Mapper :: " + vo);
-
-		/***
-		 * 값이 있을 경우 CustomUser에 Mybatis를 통해 얻어온 데이터를
-		 * 주입하여 객체변수를 return 해준다
-		 * */
-		return vo == null ? null : new CustomUser(vo);
-	}
-
-
-/*************************************************************************************************/
-/*************************************************************************************************/
-/*************************************************************************************************/
-/*************************************************************************************************/
-/*************************************************************************************************/
-
-
-/**
- * @Desripction : 해당 class는 Security에서 제공하는
- *  			  User.java 파일을 상속 받아 사용하며
- *  			  로그인에 관한 정보를 갖는 class이다.
- *
- *  			  ✅ 해당 class를 사용 하는 이유는
- *                   기존에 제공하는 Security의 로그인 정보 말고도
- *                   다른 다양한 정보를 추가하여 사용 가능
- *
- *                ✅ username으로 ID를 사용하는데 이러한 헷갈릴 수
- *                   있는 변수를 내가 커스텀하여 사용 이 가능하단 점이다
- *
- *                ✅ 해당 객체는 부모 class읜 User의 생성에 필요한
- *                   변수를 맞춰서 넣어준 후 인증에 사용학ㅎ
- *                   변수인 MemberVO member에 데이터를 주입
- *                   ex) this.member = vo
- *                   로 넣어주어 불러서 사용이 가능하다는 장점이 있다!
- *                   @see : admin.jsp << security tag를 이용해서 사용중
- *
- *                   * jsp 내 tag 명령어
- *                     - hasRole(??)       		: 해당 권한이 있으면 TRUE를 반환
- *                     - hasAuthority??()  		: 해당 권한이 있으면 TRUE를 반환
- *
- *                     - hasAnyRole([??,??])    : 여러 권한중 하나라도 해당하면 TURE
- *                     - hasAnyAuthority([???]) : 여러 권한중 하나라도 해당하면 TURE
- *
- *                     - principal 				: 현재 사용자의 정보를 의미
- *                     - permitAll				: 모든 사용자에게 허용
- *                     - denyAll				: 모든 사용자에게 거부
- *
- *                     - isAnonymous() 			: 익명의 사용자의 경우 로그인을 하지 않은 경우에 해당
- *                     - isAuthenticated() 		: 인증된 사용자라면 TRUE
- * **/
-@Getter
-public class CustomUser extends User{
-
-	private static final long serialVersionUID = 1L;
-
-	private MemberVO member;
-
-	public CustomUser(String username
-					, String password
-					, Collection<? extends GrantedAuthority> authorities) {
-		super(username, password, authorities);
-	}
-
-	public CustomUser(MemberVO vo) {
-		super( vo.getUserid()
-			 , vo.getUserpw()
-			 , vo.getAuthList().stream()
-			 				   .map(auth -> new SimpleGrantedAuthority(auth.getAuth())) // 권한 목록은 SimpleGrantedAuthority을사용해서 변환해 줘야한다!
-			 				   .collect(Collectors.toList())
-			 );
-		this.member = vo;
-	}
-
-}
-
-
-```
+>
+> 🔽security-context.xml
+>
+> ```xml
+> <!-- security-conext.xml -->
+>
+>    <!-- 로그아웃 시 핸들러 -->
+>    <security:http >
+>    <!-- 로그아웃 시 쿠키삭제 -->
+>    <security:logout logout-url="/logout" logout-success-url="/" invalidate-session="true"
+>    delete-cookies="remember-me,JSESSION_ID" /> <!-- JSESSION_ID는 톰겟에서 발행한 쿠키의 이름이다 -->
+>    </security:http >
+>
+>
+> ```
+>
+> 5 . 로그인 성공시 쿠키에 계정 정보를 기억 remember-me 자동로그인 기능
+>
+> 🔽 security-conext.xml
+>
+> ```xml
+> <!-- security-context.xml -->
+>    <!--
+> 				자동로그인 설정 :: 커스텀하여 사용할 것이 아니라면 시큐르티 구조에 맞는 table이 생성되어 있어야함
+> 				               ex) CREATE TABLE persistent_logins (
+> 									username VARCHAR(64) NOT NULL
+> 									, series VARCHAR(64) PRIMARY KEY
+> 									, token VARCHAR(64) NOT null
+> 									, last_used TIMESTAMP NOT null
+> 								)
+>
+> 				✅ @see: [name='rememeber-me']를 사용하여 파라미터 key값을 맞춰
+> 				   확인 유무를 전달하는것으 확인 할 수 있다.
+> 			-->
+> 			<security:remember-me data-source-ref="dataSource" token-validity-seconds="604800"/>
+> ```
+>
+> 🔽 클라이언트단
+>
+> ```jsp
+> <!-- jsp -->
+>
+> 	<form method="post" action="/login">
+> 		<input type="text" name="username" value="admin" >
+> 		<input type="password" name="password" value="admin" >
+> 		<input type="submit" >
+> 		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" >
+> 		<!-- 해당 name을 맞춰서 boolean Type으로 값을 던지면 쿠키에 저장된다! -->
+> 		<input type="checkbox" name="remember-me"> Remember Me
+> 	</form>
+>
+> ```
+>
+> 6 . fetch를 사용하여 token값 전달
+>
+> 🔽 클라이언트단
+>
+> ```javascript
+> // javascript
+>    fetch("URL", {
+>      method: "POST",
+>      headers: {
+>        Accept: "application/json", //수신 결과 데이터 타입
+>        "Content-Type": "application/json", //송신 파라미터 타입
+>        "X-CSRF-TOKEN": csrfToken, //csrf 값전달
+>      },
+>      body: String(this.bno),
+>    })
+>      .then((response) => response.json())
+>      .then((result) => { ....Code! })
+> ```
+>
+> ---
