@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import com.yoo.security.domain.CustomUser;
+
 import lombok.extern.log4j.Log4j;
 
 /**
@@ -26,6 +28,10 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler{@
 		log.warn("Login Success");
 		log.info("누가 먼저니??? ::: CustomLoginSuccessHandler");
 		List<String> roleNames = new ArrayList<>();
+		
+		//authentication를 사용해서 로그인 성공한 유저의 데이터를 server단에서 사용가능
+		CustomUser vo =  (CustomUser) authentication.getPrincipal();
+		log.info("vo :: " + vo);
 		
 		//권한 확인 한가지 종류의  권한이 아닐수 있으므로 배열로 들어옴
 		authentication.getAuthorities().forEach(authority -> {

@@ -25,7 +25,7 @@
 			<security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
 			
 			<!-- 로그인 핸들러 -->
-			<security:form-login login-page="/customLogin" authentication-success-handler-ref="customloginSuccess"/>
+			<security:form-login login-page="/customLogin" login-processing-url="/loginReq" authentication-success-handler-ref="customloginSuccess"/>
 			
 			<!-- 잘못된 접근시 핸들러 -->
 			<security:access-denied-handler ref="customAccessDenied"/>

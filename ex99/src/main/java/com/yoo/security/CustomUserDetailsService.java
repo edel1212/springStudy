@@ -31,8 +31,6 @@ public class CustomUserDetailsService implements UserDetailsService{
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		log.warn("Load User By UserName : " + username);
 		
-		log.info("누가 먼저니??? ::: loadUserByUsername");
-		
 		//받아온 ID를 통해 정보를 가져옴 pw 체크를 하진 않음
 		MemberVO vo = memberMapper.getMemberInfo(username);
 		
