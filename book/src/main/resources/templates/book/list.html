@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko"
+	xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="EUC-KR">
+<title>Insert title here</title>
+<script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+</head>
+<body>
+유정호 입니다
+
+[[${result.age}]]
+
+
+<script>
+$.ajax({
+    type : 'get',           // 타입 (get, post, put 등등)
+    url : '/book/apiGet/흑곰은 졸라귀여워!!!',           // 요청할 서버url
+    async : true,            // 비동기화 여부 (default : true)
+    headers : {              // Http header
+      "Content-Type" : "application/json",
+      //"X-HTTP-Method-Override" : "POST"
+    },
+    success : function(result) { // 결과 성공 콜백함수
+        console.log(result);
+        document.querySelector("body").append(result)
+    },
+    error : function(request, status, error) { // 결과 에러 콜백함수
+        console.log(error)
+    }
+})
+</script>
+</body>
+</html>
